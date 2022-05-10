@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>LED controller</title>
+    <script src="../js/wheel.js"></script>
+    <!-- <script src="../js/script.js"></script> -->
+    <link rel="stylesheet" type="text/css" href="../style/style.css" />
+    <link rel="stylesheet" type="text/css" href="../style/menu.css" />
+    <link rel="stylesheet" type="text/css" href="../style/wheel.css" />
+  </head>
+
+  <body>
+    <div id="wrapper">
+      <div id="hat">
+        <h2 id="main-name">LED controller</h2>
+        <div id="menu-button">
+          <input type="checkbox" id="active" />
+          <label for="active" class="menu-btn"><i class="fa-bars"></i></label>
+          <div class="menu-wrapper">
+            <ul>
+              <li><a href="#">Home</a></li>
+              <li><a href="#">About</a></li>
+              <li><a href="#">Services</a></li>
+              <li><a href="#">Gallery</a></li>
+              <li><a href="#">Feedback</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- <div id="head-text" class="headers">
+        <h1 id="hello" class="animate typing" time="1000" hidden>
+          Wake up, Neo
+        </h1>
+      </div> -->
+      <div id="color-wheel-wrapper">
+        <div id="color-wheel-background">
+          <div id="color-wheel">
+            <div id="color-marker"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="palette">
+        <div class="color-item">
+          <div class="inner-color-item selected-color-item" id="ci-0"></div>
+        </div>
+        <div class="color-item">
+          <div class="inner-color-item" id="ci-1"></div>
+        </div>
+        <div class="color-item">
+          <div class="inner-color-item" id="ci-2"></div>
+        </div>
+      </div>
+
+      <input type="range" id="brightness-range" value="0" min="0" max="255"/>
+
+      <div id="input-forms" class="animate" time="0" hidden>
+        <h2>Choose mode:</h2>
+        <select name="wireless" class="similar-input" id="APlist">
+          s
+          <option selected="selected">MODE></option>
+          <option value="404" id="not-found">Access Point not found</option>
+        </select>
+        <!-- <button id="connect">Set</button> -->
+      </div>
+    </div>
+  </body>
+</html>
