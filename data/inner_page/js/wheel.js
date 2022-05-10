@@ -31,15 +31,30 @@ const colors = [
 
 
 document.addEventListener('DOMContentLoaded', function () {
+  var localColor;
+
   initPresetColor();
   initColorRange();
 
+  document.getElementById('color-wheel').addEventListener('touchmove', getColorFromWheel);
+  document.getElementById('color-wheel').addEventListener('mousemove', getColorFromWheel);
+  document.getElementById('color-wheel').addEventListener('click', merkerHandler);
+  document.getElementById('color-wheel').addEventListener('touchmove', merkerHandler);
+  // document.getElementById('color-wheel').addEventListener('pointermove', merkerHandler);
 
-  var localColor;
-  document.getElementById('color-wheel').addEventListener('mousemove', function (e) {
+  function merkerHandler() {
+    document.getElementById('color-marker').style.background = hsv2hex(localColor);
+    colorsPresets[nowPreset] = localColor.slice(0);
+    changeColorsBoxes();
+  }
+
+  function getColorFromWheel(e) {
     var wheel = document.getElementById('color-wheel');
     var rect = wheel.getBoundingClientRect();
     //Compute cartesian coordinates as if the circle radius was 1
+    if(e.type == 'touchmove'){
+      e = e.touches[0];
+    }
     var x = 2 * (e.clientX - rect.left) / (rect.right - rect.left) - 1;
     var y = 1 - 2 * (e.clientY - rect.top) / (rect.bottom - rect.top);
     //Compute the angle in degrees with 0 at the top and turning clockwise as expected by css conic gradient
@@ -82,13 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
       marker.style.left = markerX - marker.offsetHeight / 2 + "px";
     }
     // console.log(e.clientY, e.clientX);
-  });
+  }
 
-    document.getElementById('color-wheel').addEventListener('click', function (e) {
-      document.getElementById('color-marker').style.background = hsv2hex(localColor);
-      colorsPresets[nowPreset] = localColor.slice(0);
-      changeColorsBoxes();
-    });
 });
 
 
