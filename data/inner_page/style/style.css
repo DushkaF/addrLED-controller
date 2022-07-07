@@ -19,10 +19,13 @@
   }
 }
 
+html, body {margin: 0; height: 100%; overflow: hidden}
+
 html {
   height: 100%;
   width: 100%;
   -webkit-appearance: none;
+  
 }
 
 body {
