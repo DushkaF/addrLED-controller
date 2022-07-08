@@ -23,10 +23,8 @@
           <label for="active" class="menu-btn"><i class="fa-bars"></i></label>
           <div class="menu-wrapper">
             <ul>
-              <li><a href="#">Home</a></li>
+              <li><a href="#">Settings</a></li>
               <li><a href="#">About</a></li>
-              <li><a href="#">Services</a></li>
-              <li><a href="#">Gallery</a></li>
               <li><a href="#">Feedback</a></li>
             </ul>
           </div>
@@ -37,35 +35,40 @@
           Wake up, Neo
         </h1>
       </div> -->
-      <div id="color-wheel-wrapper">
-        <div id="color-wheel-background">
-          <div id="color-wheel">
-            <div id="color-marker"></div>
+      <div id="color-settings-box" class="settings-block">
+        <div id="color-wheel-wrapper">
+          <div id="color-wheel-background">
+            <div id="color-wheel">
+              <div id="color-marker"></div>
+            </div>
           </div>
         </div>
+
+        <div id="palette">
+          <div class="color-item">
+            <div class="inner-color-item selected-color-item" id="ci-0"></div>
+          </div>
+          <div class="color-item">
+            <div class="inner-color-item" id="ci-1"></div>
+          </div>
+          <div class="color-item">
+            <div class="inner-color-item" id="ci-2"></div>
+          </div>
+        </div>
+
+        <input type="range" id="brightness-range" value="0" min="0" max="255" />
       </div>
 
-      <div id="palette">
-        <div class="color-item">
-          <div class="inner-color-item selected-color-item" id="ci-0"></div>
-        </div>
-        <div class="color-item">
-          <div class="inner-color-item" id="ci-1"></div>
-        </div>
-        <div class="color-item">
-          <div class="inner-color-item" id="ci-2"></div>
-        </div>
+      <div id="effect-settings" class="settings-block">
+        <select id="led-mode-select">
+          <option value="n1">Effect 1</option>
+          <option value="n2">Effect 2</option>
+          <option value="n3">Effect 3</option>
+          <option value="n4">Effect 4</option>
+        </select>
+
+        <input type="range" id="speed-range" value="0" min="0" max="255" />
       </div>
-
-      <input type="range" id="brightness-range" value="0" min="0" max="255"/>
-
-      <select id="standard-select">
-        <option value="n1">Effect 1</option>
-        <option value="n1">Effect 2</option>
-        <option value="n1">Effect 3</option>
-        <option value="n1">Effect 4</option>
-      </select>
-
 
       <div id="input-forms" class="animate" time="0" hidden>
         <h2>Choose mode:</h2>

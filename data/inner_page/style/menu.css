@@ -76,7 +76,7 @@
   line-height: 50px;
   transition: all 0.3s ease;
 }
-.menu-wrapper ul li a:after {
+/* .menu-wrapper ul li a:after {
   position: absolute;
   content: "";
   background: #fff;
@@ -91,7 +91,7 @@
   z-index: -1;
   animation: rotate 1.5s linear infinite;
   transition: transform 0.3s ease;
-}
+} */
 
 .menu-wrapper ul li a:hover:after {
   transform: scaleY(1);
@@ -105,11 +105,11 @@ input[type="checkbox"] {
   display: none;
 }
 
-@keyframes rotate {
+/* @keyframes rotate {
   0% {
     filter: hue-rotate(0deg);
   }
   100% {
     filter: hue-rotate(360deg);
   }
-}
+} */

@@ -120,15 +120,3 @@ input[type="range"] {
   }
 }
 
-select{
-  height: 40px;
-  width: 80%;
-  background-color: #584b4f;
-  border-radius: 500px;
-  text-align: center;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 17px;
-  color:  #fff;
-  box-shadow: none;
-}
-
