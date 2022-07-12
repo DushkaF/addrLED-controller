@@ -131,6 +131,7 @@ function initPresetColor(){
       }
       nowPreset = number;
       this.classList.add("selected-color-item");
+      change_range_color();
     });
   }
 }
