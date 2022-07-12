@@ -14,10 +14,15 @@ function change_range_color(){
   var e = document.getElementById("brightness-range");
   var rangeVal = e.value;
   colorsPresets[nowPreset][2] = rangeVal;
-
   e.style.setProperty('--range-color', hsv2hex(colorsPresets[nowPreset]));
 }
 
+function updateRangeState() {
+  var e = document.getElementById("brightness-range");
+  e.value = colorsPresets[nowPreset][2];
+  e.style.setProperty('--range-color', hsv2hex(colorsPresets[nowPreset]));
+
+}
 
 const colors = [
   { r: 0xe4, g: 0x3f, b: 0x00 },
@@ -55,38 +60,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if(e.type == 'touchmove'){
       e = e.touches[0];
     }
-    var x = 2 * (e.clientX - rect.left) / (rect.right - rect.left) - 1;
-    var y = 1 - 2 * (e.clientY - rect.top) / (rect.bottom - rect.top);
-    //Compute the angle in degrees with 0 at the top and turning clockwise as expected by css conic gradient
-    var a = ((Math.PI / 2 - Math.atan2(y, x)) / Math.PI * 180);
-    if (a < 0) a += 360;
-    //Map the angle between 0 and number of colors in the gradient minus one
-    a = a / 360 * (colors.length - 1);  //minus one because the last item is at 360° which is the same as 0°
-    //Compute the colors to interpolate
-    var a0 = Math.floor(a) % colors.length;
-    var a1 = (a0 + 1) % colors.length;
-    var c0 = colors[a0];
-    var c1 = colors[a1];
-    //Compute the weights and interpolate colors
-    var a1w = a - Math.floor(a);
-    var a0w = 1 - a1w;
-    var color = {
-      r: c0.r * a0w + c1.r * a1w,
-      g: c0.g * a0w + c1.g * a1w,
-      b: c0.b * a0w + c1.b * a1w
-    };
-    //Compute the radius
-    var r = Math.sqrt(x * x + y * y);
-    if (r > 1) r = 1;
-    //Compute the white weight, interpolate, and round to integer
-    var cw = r < 0.8 ? (r / 0.8) : 1;
-    var ww = 1 - cw;
-    color.r = Math.round(color.r * cw + 255 * ww);
-    color.g = Math.round(color.g * cw + 255 * ww);
-    color.b = Math.round(color.b * cw + 255 * ww);
-    //Compute the hex color code and apply it
-    localColor = rgb2hsv(color.r, color.g, color.b);
-
     // Set marker
     let marker = document.getElementById('color-marker');
     let markerX = e.clientX - rect.left;
@@ -95,7 +68,42 @@ document.addEventListener('DOMContentLoaded', function () {
     if (Math.pow((markerX - wheel.offsetWidth / 2), 2) + Math.pow((markerY - wheel.offsetHeight / 2), 2) <= Math.pow((wheel.offsetHeight / 2), 2)) {
       marker.style.top = markerY - marker.offsetWidth / 2 + "px";
       marker.style.left = markerX - marker.offsetHeight / 2 + "px";
+
+
+      var x = 2 * (e.clientX - rect.left) / (rect.right - rect.left) - 1;
+      var y = 1 - 2 * (e.clientY - rect.top) / (rect.bottom - rect.top);
+      //Compute the angle in degrees with 0 at the top and turning clockwise as expected by css conic gradient
+      var a = ((Math.PI / 2 - Math.atan2(y, x)) / Math.PI * 180);
+      if (a < 0) a += 360;
+      //Map the angle between 0 and number of colors in the gradient minus one
+      a = a / 360 * (colors.length - 1);  //minus one because the last item is at 360° which is the same as 0°
+      //Compute the colors to interpolate
+      var a0 = Math.floor(a) % colors.length;
+      var a1 = (a0 + 1) % colors.length;
+      var c0 = colors[a0];
+      var c1 = colors[a1];
+      //Compute the weights and interpolate colors
+      var a1w = a - Math.floor(a);
+      var a0w = 1 - a1w;
+      var color = {
+        r: c0.r * a0w + c1.r * a1w,
+        g: c0.g * a0w + c1.g * a1w,
+        b: c0.b * a0w + c1.b * a1w
+      };
+      //Compute the radius
+      var r = Math.sqrt(x * x + y * y);
+      if (r > 1) r = 1;
+      //Compute the white weight, interpolate, and round to integer
+      var cw = r < 0.8 ? (r / 0.8) : 1;
+      var ww = 1 - cw;
+      color.r = Math.round(color.r * cw + 255 * ww);
+      color.g = Math.round(color.g * cw + 255 * ww);
+      color.b = Math.round(color.b * cw + 255 * ww);
+      //Compute the hex color code and apply it
+      localColor = rgb2hsv(color.r, color.g, color.b);
+
     }
+    
     // console.log(e.clientY, e.clientX);
   }
 
@@ -131,7 +139,7 @@ function initPresetColor(){
       }
       nowPreset = number;
       this.classList.add("selected-color-item");
-      change_range_color();
+      updateRangeState();
     });
   }
 }
