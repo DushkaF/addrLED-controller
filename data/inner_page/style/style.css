@@ -191,7 +191,8 @@ select{
   width: 80%;
   background-color: #584b4f;
   border-radius: 500px;
-  text-align: -webkit-center;
+  padding-left: 5%;
+  /* text-align: -webkit-center; */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 17px;
   color:  #fff;
@@ -201,7 +202,6 @@ select{
 
 .settings-block{
   width: 100%;
-  /* height: ; */
   display: flex;
   flex-direction: column;
   justify-content: space-around;
