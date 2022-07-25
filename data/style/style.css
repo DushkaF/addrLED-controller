@@ -200,6 +200,10 @@ select{
   outline: none;
 }
 
+select > option {
+  color:gainsboro;
+}
+
 .settings-block{
   width: 100%;
   display: flex;

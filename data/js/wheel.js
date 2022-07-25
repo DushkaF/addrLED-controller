@@ -1,6 +1,8 @@
-window.onload = function () {
+import sendEffectsState from './script.js';
+
+// window.onload = function () {
   
-}
+// }
 
 
 function initColorRange(){
@@ -13,7 +15,7 @@ function initColorRange(){
 function change_range_color(){
   var e = document.getElementById("brightness-range");
   var rangeVal = e.value;
-  colorsPresets[nowPreset][2] = rangeVal;
+  colorsPresets[nowPreset][2] = parseInt(rangeVal);
   e.style.setProperty('--range-color', hsv2hex(colorsPresets[nowPreset]));
 }
 
@@ -101,12 +103,9 @@ document.addEventListener('DOMContentLoaded', function () {
       color.b = Math.round(color.b * cw + 255 * ww);
       //Compute the hex color code and apply it
       localColor = rgb2hsv(color.r, color.g, color.b);
-
     }
-    
     // console.log(e.clientY, e.clientX);
   }
-
 });
 
 
@@ -116,7 +115,8 @@ var colorsPresets = [];
 
 function changeColorsBoxes() {
   change_range_color();
-  changeColorPresets()
+  changeColorPresets();
+  sendEffectsState(colorsPresets[nowPreset]);
 }
 
 
@@ -145,8 +145,6 @@ function initPresetColor(){
 }
 
 
-
-
 function componentToHex(c) {
   var hex = c.toString(16);
   return hex.length == 1 ? "0" + hex : hex;
@@ -157,8 +155,9 @@ function rgb2Hex(r, g, b) {
 }
 
 function rgb2hsv(r, g, b) {
-  let v=Math.max(r,g,b), c=v-Math.min(r,g,b);
-  let h= c && ((v==r) ? (g-b)/c : ((v==g) ? 2+(b-r)/c : 4+(r-g)/c)); 
+  let v = Math.max(r,g,b);
+  let c = v - Math.min(r,g,b);
+  let h = c && ((v==r) ? (g-b)/c : ((v==g) ? 2+(b-r)/c : 4+(r-g)/c)); 
   return [60*(h<0?h+6:h), v&&c/v, v];
 }
 

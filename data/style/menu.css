@@ -5,6 +5,10 @@
 }
 
 .menu-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
   z-index: 1;
   position: fixed;
   top: 0;
@@ -76,17 +80,18 @@
   line-height: 50px;
   transition: all 0.3s ease;
 }
+
 /* .menu-wrapper ul li a:after {
   position: absolute;
   content: "";
   background: #fff;
   background: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
   /*background: linear-gradient(375deg, #1cc7d0, #2ede98);*/
-  width: 104%;
+  /*width: 104%;
   height: 110%;
   left: -2%;
   top: -5%; /* if the font is 'Oswald'*/
-  border-radius: 50px;
+  /*border-radius: 50px;
   transform: scaleY(0);
   z-index: -1;
   animation: rotate 1.5s linear infinite;
@@ -99,6 +104,21 @@
 
 .menu-wrapper ul li a:hover {
   color: #fff;
+}
+
+.menu-wrapper input {
+  color: gainsboro;
+  border-radius: 50px;
+  width: 50%;
+  height: 50px;
+}
+
+#led-count{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 50%; 
+
 }
 
 input[type="checkbox"] {

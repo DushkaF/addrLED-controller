@@ -1,88 +1,34 @@
 window.onload = function () {
-    greatView().then(function (done) {
-        getSelectList();
-        process();
-    });
+   getSelectList();
 }
 
-var animatedCount = 0;
-
-function animatedText(delay) {
-    var elem = document.getElementsByClassName('animate');
-    console.log(elem);
-    for (var i = 0; i < elem.length; i++) {
-        console.log(elem[i]);
-        setTimeout(function (item) {
-            var showTime = parseInt(item.getAttribute("time"));
-            if (item.classList.contains("typing")) {
-                var typeText = item.innerHTML.split("");
-                item.innerHTML = "";
-                showTime = 100 * typeText.length;
-                var interval = setInterval(() => {
-                    if (!typeText[0]) {
-
-                        return clearInterval(interval);
-                    };
-
-                    item.innerHTML += typeText.shift();
-                }, 100);
-            }
-            item.hidden = false;
-            animatedCount++;
-            if (parseInt(item.getAttribute("time")) != 0) {
-                setTimeout(function (item) {
-                    item.hidden = true;
-                }, showTime, item);
-            }
-        }, i * 1000, elem[i]);
-    }
-    return elem.length;
-}
-
-function greatView() {
-    var delay = 1200;
-    var count = animatedText(delay);
-    var promise = new Promise(function (resolve, reject) {
-        window.setTimeout(function () {
-            resolve('done!');
-        }, delay * count);
-    });
-    return promise;
-}
-
-function process() {
-    // document.getElementById("connect").onclick = function () {
-    //     sendSelectedAP();
-    // }
-}
 var repeatRequest;
 var existRequest;
 
 function getSelectList() {
-    makeGETRequest('../APlist.json', decodeAPlistJSON, function (request, path, func) {
-        // hiddenForm();
+    makeGETRequest('../effects_set.json', decodeSetJSON, function (request, path, func) {
         waitGET(request, path, func);
     });
 }
 
-function decodeAPlistJSON(handler) {
+function decodeSetJSON(handler) {
     // showForm();
     console.log("content-type: ", handler.getResponseHeader('Content-Type'));
-    var respJSON = JSON.parse(handler.responseText);
-    console.log(respJSON["name"]);
-    var APlist = respJSON["name"];
-    pasteInListOnPage(APlist);
+    console.log(handler.responseText);
+    var resp = JSON.parse(handler.responseText);
+    console.log(resp["effects"]);
+    var effects = resp["effects"];
+    pasteInListOnPage(effects);
 }
 
 function pasteInListOnPage(list) {
     if (list.length > 0) {
-        document.getElementById("not-found").remove();
     }
-    var selectList = document.getElementById("APlist");
+    var selectList = document.getElementById("led-mode-select");
     for (var i = 0; i < list.length; i++) {
         var option = document.createElement('option');
         option.innerHTML = list[i];
-        option.value = list[i];
+        option.value = i+1;
         selectList.appendChild(option);
     }
 }
@@ -103,35 +49,23 @@ function waitGET(request, path, func) {
 }
 
 
+var effectsSending = false;
 
-function sendSelectedAP() {
-    var selectList = document.getElementById("APlist");
-    var passForm = document.getElementById("password");
-    var sendAPjson = { "name": selectList.options[selectList.selectedIndex].text, "password": passForm.value };
-    console.log(sendAPjson);
-    makePOSTRequest("/selectedAp", sendAPjson, function () { }, waitConnecting);
-    makeGETRequest('/selectedAp', showLinkIP, function (request, path, func) {
-        waitGET(request, path, func);
-    });
+export default function sendEffectsState(hueColor) {
+    if (!effectsSending){
+        effectsSending = true;
+        var selectList = document.getElementById("led-mode-select");
+        // var hueColor = [50,50,50];
+        var sendJson = { "effect": selectList.selectedIndex, "brightness":hueColor};
+        console.log(sendJson);
+        makePOSTRequest("/selectedEffects", sendJson, function () {
+            effectsSending = false;
+        }, function(){alert("Connection lost")});
     //alert(sendAPjson["name"] + " " + sendAPjson["password"]);
+    }
 }
 
-function showLinkIP(handler) {
-    var respJSON = JSON.parse(handler.responseText);
-    var IPlink = respJSON["ip"];
-    document.getElementById("link-box").onclick = function () {
-        var link = IPlink;
-        copyToClipboard(link);
-        window.open(link, '_system');
-        makeGETRequest('/redirected', function () { });
-        window.location.href = link;
-    }
-    document.getElementById("input-forms").hidden = true;
-    document.getElementById("load-text").hidden = true;
-    document.getElementById("floatingBarsG").hidden = true;
-    document.getElementById("connected-text").hidden = false;
-    document.getElementById("IP-link").hidden = false;
-}
+// export function sendEffectsState() {}
 
 function makeGETRequest(path, func, badFunc = function () { ; }) {
     var xmlHttp = CreateRequest();
