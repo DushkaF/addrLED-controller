@@ -5,21 +5,21 @@ void handlers() {
   });
 
   // Route to load styles file
-  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest * request) {
+  server.on("/style/style.css", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/style/style.css", "text/css");
   });
-  server.on("/wheel.css", HTTP_GET, [](AsyncWebServerRequest * request) {
+  server.on("/style/wheel.css", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/style/wheel.css", "text/css");
   });
-  server.on("/menu.css", HTTP_GET, [](AsyncWebServerRequest * request) {
+  server.on("/style/menu.css", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/style/menu.css", "text/css");
   });
 
   // Route to load scripts
-  server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest * request) {
+  server.on("/js/script.css", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/js/script.css", "text/javascript");
   });
-  server.on("/wheel.js", HTTP_GET, [](AsyncWebServerRequest * request) {
+  server.on("/js/wheel.js", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/js/wheel.js", "text/javascript");
   });
 
