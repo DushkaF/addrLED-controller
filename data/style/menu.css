@@ -107,19 +107,27 @@
 }
 
 .menu-wrapper input {
-  color: gainsboro;
+  background-color: gainsboro;
   border-radius: 50px;
   width: 50%;
-  height: 50px;
+  height: 40px;
+  color: #363538;
+  text-align: center;
+  font-size: medium;
+  font-weight: bold;
 }
 
-#led-count{
+.menu-wrapper div{
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
   align-items: center;
-  width: 50%; 
-
+  width: 50%;
+  padding: 10px;
+  height: 100px;
 }
+
+
 
 input[type="checkbox"] {
   display: none;

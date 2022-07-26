@@ -35,16 +35,12 @@ struct CRGB leds[LED_COUNT];
 int ledsX[LED_COUNT][3];     //-ARRAY FOR COPYING WHATS IN THE LED STRIP CURRENTLY (FOR CELL-AUTOMATA, MARCH, ETC)
 
 int thisdelay = 20;          //-FX LOOPS DELAY VAR
-int thisstep = 10;           //-FX LOOPS DELAY VAR
-int thishue = 0;             //-FX LOOPS DELAY VAR
-int thissat = 255;           //-FX LOOPS DELAY VAR
+int thisstep = 10;           //-FX LOOPS  VAR
+int thishue = 0;             //-FX LOOPS  VAR
+int thissat = 255;           //-FX LOOPS  VAR
+int thisval = 0;
 
-int thisindex = 0;
-int thisRED = 0;
-int thisGRN = 0;
-int thisBLU = 0;
-
-int idex = 0;                //-LED INDEX (0 to LED_COUNT-1
+int idex = 0;                //-LED INDEX (0 to LED_COUNT-1)
 int ihue = 0;                //-HUE (0-255)
 int ibright = 0;             //-BRIGHTNESS (0-255)
 int isat = 0;                //-SATURATION (0-255)
@@ -91,8 +87,9 @@ void loop() {
   if (Serial.available() > 0) {
     ledMode = Serial.parseInt();
     Serial.println("-> " + String(ledMode));
+    change_mode(ledMode);               // меняем режим через change_mode (там для каждого режима стоят цвета и задержки)  
   }
-  ledEffect(ledMode);
+  ledEffect(ledMode);  
 }
 
 // функция эффектов
@@ -136,8 +133,8 @@ void ledEffect(int ledMode) {
     case 28: kitt(); break;                    // случайные вспышки красного в вертикаьной плоскости
     case 29: matrix(); break;                  // зелёненькие бегают по кругу случайно
     case 30: new_rainbow_loop(); break;        // крутая плавная вращающаяся радуга
-    case 31: strip_march_ccw(); break;         // чёт сломалось
-    case 32: strip_march_cw(); break;          // чёт сломалось
+//    case 31: strip_march_ccw(); break;         // чёт сломалось
+//    case 32: strip_march_cw(); break;          // чёт сломалось
     case 33: colorWipe(0x00, 0xff, 0x00, thisdelay);
       colorWipe(0x00, 0x00, 0x00, thisdelay); break;                                // плавное заполнение цветом
     case 34: CylonBounce(0xff, 0, 0, 4, 10, thisdelay); break;                      // бегающие светодиоды
@@ -155,8 +152,8 @@ void ledEffect(int ledMode) {
     case 45: BouncingBalls(0xff, 0, 0, 3); break;                                   // прыгающие мячики
     case 46: BouncingColoredBalls(3, ballColors); break;                            // прыгающие мячики цветные
 
-    case 888: demo_modeA(); break;             // длинное демо
-    case 889: demo_modeB(); break;             // короткое демо
+//    case 888: demo_modeA(); break;             // длинное демо
+//    case 889: demo_modeB(); break;             // короткое демо
   }
 }
 
@@ -164,7 +161,7 @@ void change_mode(int newmode) {
   thissat = 255;
   switch (newmode) {
     case 0: one_color_all(0, 0, 0); LEDS.show(); break; //---ALL OFF
-    case 1: one_color_all(255, 255, 255); LEDS.show(); break; //---ALL ON
+    case 1: one_color_all(thishue, thissat, thisval); LEDS.show(); break; //---ALL ON
     case 2: thisdelay = 60; break;                      //---STRIP RAINBOW FADE
     case 3: thisdelay = 20; thisstep = 10; break;       //---RAINBOW LOOP
     case 4: thisdelay = 20; break;                      //---RANDOM BURST

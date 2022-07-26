@@ -5,6 +5,8 @@ window.onload = function () {
 var repeatRequest;
 var existRequest;
 
+import hueColor from './wheel.js';
+
 function getSelectList() {
     makeGETRequest('../effects_set.json', decodeSetJSON, function (request, path, func) {
         waitGET(request, path, func);
@@ -33,21 +35,13 @@ function pasteInListOnPage(list) {
     }
 }
 
-function waitGET(request, path, func) {
-    if (request.status == 202 && request.readyState == 4) {
-        repeatRequest = setInterval(function () {
-            if (!existRequest) {
-                existRequest = true;
-                console.log("try to get");
-                makeGETRequest(path, function (secondary_request) {
-                    repeatRequest = clearInterval(repeatRequest);
-                    func(secondary_request);
-                }, function () { existRequest = false });
-            }
-        }, 1500);
-    }
+document.getElementById("led-mode-select").onchange = function(){
+    sendEffectsState(hueColor());
 }
 
+document.getElementById("speed-range").onchange = function(){
+    sendEffectsState(hueColor());
+}
 
 var effectsSending = false;
 
@@ -55,17 +49,33 @@ export default function sendEffectsState(hueColor) {
     if (!effectsSending){
         effectsSending = true;
         var selectList = document.getElementById("led-mode-select");
+        var speedSlider = document.getElementById("speed-range");
         // var hueColor = [50,50,50];
-        var sendJson = { "effect": selectList.selectedIndex, "brightness":hueColor};
+        var sendJson = { "effect": selectList.selectedIndex, "hue":hueColor, "speed": parseInt(speedSlider.value)};
         console.log(sendJson);
         makePOSTRequest("/selectedEffects", sendJson, function () {
             effectsSending = false;
-        }, function(){alert("Connection lost")});
+        }, function(){
+            alert("Connection lost");
+            effectsSending = false;
+    });
     //alert(sendAPjson["name"] + " " + sendAPjson["password"]);
     }
 }
 
-// export function sendEffectsState() {}
+
+document.getElementById("LED-count").onchange = function(){
+    sendSettings();
+}
+
+function sendSettings() {
+    var countInput = document.getElementById("LED-count");
+    var sendJson = { "led-count": parseInt(countInput.value)};
+    console.log(sendJson);
+    makePOSTRequest("/settings", sendJson, function () {}, function(){
+        alert("Connection lost");
+    });
+}
 
 function makeGETRequest(path, func, badFunc = function () { ; }, loadFunc = function () { }) {
     var xmlHttp = CreateRequest();
@@ -107,6 +117,20 @@ function makePOSTRequest(path, json, func = function () { }, badFunc = function 
     xmlHttp.send("data=" + JSON.stringify(json)); // Отправляем POST-запрос
 }
 
+function waitGET(request, path, func) {
+    if (request.status == 202 && request.readyState == 4) {
+        repeatRequest = setInterval(function () {
+            if (!existRequest) {
+                existRequest = true;
+                console.log("try to get");
+                makeGETRequest(path, function (secondary_request) {
+                    repeatRequest = clearInterval(repeatRequest);
+                    func(secondary_request);
+                }, function () { existRequest = false });
+            }
+        }, 1500);
+    }
+}
 
 function copyToClipboard(str) {
     var area = document.createElement('textarea');

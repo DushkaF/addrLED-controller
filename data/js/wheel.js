@@ -120,6 +120,10 @@ function changeColorsBoxes() {
 }
 
 
+export default function hueColor(){
+  return colorsPresets[nowPreset];
+}
+
 function changeColorPresets() {
   var presets = document.getElementsByClassName("inner-color-item");
   presets[nowPreset].style.background = hsv2hex(colorsPresets[nowPreset]);
@@ -129,7 +133,7 @@ function changeColorPresets() {
 function initPresetColor(){
   var presets = document.getElementsByClassName("inner-color-item");
   for(let i = 0;  i < presets.length; i++){
-    colorsPresets.push([0, 0, 255]);              // todo remove when server on
+    colorsPresets.push([0, 0, 200]);              // todo remove when server on
     presets[i].style.background = hsv2hex(colorsPresets[i]);
     presets[i].addEventListener("click", function(){
       var number = parseInt(String(this.id).split("-")[1]);
@@ -140,6 +144,7 @@ function initPresetColor(){
       nowPreset = number;
       this.classList.add("selected-color-item");
       updateRangeState();
+      sendEffectsState(colorsPresets[nowPreset]);
     });
   }
 }

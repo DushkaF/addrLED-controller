@@ -36,7 +36,24 @@ void handlers() {
       StaticJsonDocument<256> doc;
       deserializeJson(doc, json);
       ledMode = doc["effect"];
+      thishue = doc["hue"][0];
+      thissat = doc["hue"][1];
+      thisval = doc["hue"][2];
+      change_mode(ledMode);               // меняем режим через change_mode (там для каждого режима стоят цвета и задержки)  
       Serial.println("new led mode " + String(ledMode));
+    }
+    request->send(200);
+  });
+
+  server.on("/settings", HTTP_POST, [](AsyncWebServerRequest * request) {
+    if (request->params() > 0) {
+      AsyncWebParameter* p = request->getParam(0);
+      String json = p->value();
+      Serial.println(json);
+      StaticJsonDocument<256> doc;
+      deserializeJson(doc, json);
+//      LED_COUNT = doc["led-count"];
+      Serial.println("new led count " + String(doc["led-count"]));
     }
     request->send(200);
   });
