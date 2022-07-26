@@ -67,7 +67,7 @@ export default function sendEffectsState(hueColor) {
 
 // export function sendEffectsState() {}
 
-function makeGETRequest(path, func, badFunc = function () { ; }) {
+function makeGETRequest(path, func, badFunc = function () { ; }, loadFunc = function () { }) {
     var xmlHttp = CreateRequest();
     xmlHttp.open('GET', path, true);
     xmlHttp.onreadystatechange = function () {
@@ -80,13 +80,13 @@ function makeGETRequest(path, func, badFunc = function () { ; }) {
             }
         } else {
             console.log("not loaded");
-            badFunc(this, path, func);
+            loadFunc(this, path, func);
         }
     };
     xmlHttp.send(null);
 }
 
-function makePOSTRequest(path, json, func = function () { }, badFunc = function () { }) {
+function makePOSTRequest(path, json, func = function () { }, badFunc = function () { }, loadFunc = function () { }) {
     var xmlHttp = CreateRequest();
     xmlHttp.open('POST', path, true); // Открываем асинхронное соединение
     xmlHttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8'); // Отправляем кодировку
@@ -101,7 +101,7 @@ function makePOSTRequest(path, json, func = function () { }, badFunc = function 
             }
         } else {
             console.log("send not loaded");
-            badFunc(this);
+            loadFunc(this);
         }
     };
     xmlHttp.send("data=" + JSON.stringify(json)); // Отправляем POST-запрос
