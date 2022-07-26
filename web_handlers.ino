@@ -16,14 +16,17 @@ void handlers() {
   });
 
   // Route to load scripts
-  server.on("/js/script.css", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(SPIFFS, "/js/script.css", "text/javascript");
+  server.on("/js/script.js", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/js/script.js", "text/javascript");
   });
   server.on("/js/wheel.js", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/js/wheel.js", "text/javascript");
   });
 
-
+  // Route additional content
+  server.on("/effects_set.json", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/effects_set.json", "application/json");
+  });
 
   server.on("/selectedEffects", HTTP_POST, [](AsyncWebServerRequest * request) {
     if (request->params() > 0) {
