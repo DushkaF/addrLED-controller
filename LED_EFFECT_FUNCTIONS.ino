@@ -1,3 +1,6 @@
+unsigned long change_time, last_change, last_bright;
+int new_bright;
+
 void one_color_all(int cred, int cgrn, int cblu) {       //-SET ALL LEDS TO ONE COLOR
   for (int i = 0 ; i < LED_COUNT; i++ ) {
     leds[i].setRGB( cred, cgrn, cblu);

@@ -8,29 +8,34 @@
 #include <FastLED.h>          // библиотека для работы с лентой
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
+#include <DNSServer.h>
 
+#ifdef ESP32
 //For ESP32
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <SPIFFS.h>
-
+#elif defined(ESP8266)
 //For ESP8266
-//#include <FS.h>
-//#include <ESP8266WiFi.h>
-//#include <ESPAsyncTCP.h>
+#include <FS.h>
+#include <ESP8266WiFi.h>
+#include <ESPAsyncTCP.h>
+#else
+#error "Board not supported"
+#endif
+
+
 
 
 #define APSSID "LedControl"
 //#define APPSK  "thereisnospoon"
+IPAddress apIP(192, 168, 4, 1);
 
 #define LED_COUNT 16          // число светодиодов в кольце/ленте
 #define LED_DT 2             // пин, куда подключен DIN ленты
 
 int max_bright = 100;          // максимальная яркость (0 - 255)
 boolean adapt_light = 1;       // адаптивная подсветка (1 - включить, 0 - выключить)
-
-unsigned long change_time, last_change, last_bright;
-int new_bright;
 
 volatile byte ledMode = 3;
 
@@ -64,6 +69,8 @@ volatile boolean changeFlag;
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
 
+DNSServer dnsServer;
+const char *server_name = "led.com";  // Can be "*" to all DNS requests
 
 void setup()
 {
@@ -83,10 +90,15 @@ void setup()
 
   Serial.print("Configuring access point... ");
   /* You can remove the password parameter if you want the AP to be open. */
+  WiFi.mode(WIFI_AP);
   WiFi.softAP(APSSID);
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
+  
+  const byte DNS_PORT = 53;
+  dnsServer.start(DNS_PORT, server_name, apIP);
+  Serial.println("DNS started");
 
   handlers();
 
@@ -95,6 +107,8 @@ void setup()
 }
 
 void loop() {
+  dnsServer.processNextRequest();
+
   if (Serial.available() > 0) {
     change_mode(Serial.parseInt());               // меняем режим через change_mode (там для каждого режима стоят цвета и задержки)
     Serial.println("-> " + String(ledMode));
