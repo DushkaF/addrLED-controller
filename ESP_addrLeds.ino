@@ -35,7 +35,6 @@ IPAddress apIP(192, 168, 4, 1);
 #define LED_DT 2             // пин, куда подключен DIN ленты
 
 int max_bright = 100;          // максимальная яркость (0 - 255)
-boolean adapt_light = 1;       // адаптивная подсветка (1 - включить, 0 - выключить)
 
 volatile byte ledMode = 3;
 
@@ -95,7 +94,7 @@ void setup()
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
-  
+
   const byte DNS_PORT = 53;
   dnsServer.start(DNS_PORT, server_name, apIP);
   Serial.println("DNS started");
@@ -113,7 +112,7 @@ void loop() {
     change_mode(Serial.parseInt());               // меняем режим через change_mode (там для каждого режима стоят цвета и задержки)
     Serial.println("-> " + String(ledMode));
   }
-  ledEffect(ledMode);  
+  ledEffect(ledMode);
 }
 
 // функция эффектов

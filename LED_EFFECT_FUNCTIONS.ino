@@ -7,10 +7,13 @@ void one_color_all(int cred, int cgrn, int cblu) {       //-SET ALL LEDS TO ONE 
   }
 }
 
-void one_color_all_HSV(int hue, int sat, int val) {       //-SET ALL LEDS TO ONE COLOR
+void one_color_all_HSV(byte hue, byte sat, byte val) {       //-SET ALL LEDS TO ONE COLOR
   for (int i = 0 ; i < LED_COUNT; i++ ) {
     leds[i] = CHSV(hue, sat, val);
   }
+      Serial.println("show led sate");
+      Serial.println("H \t S \t V");
+      Serial.println(String(hue) + "\t" + String(sat) + "\t" + String(val));
 }
 
 
