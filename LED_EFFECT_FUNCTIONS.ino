@@ -8,12 +8,15 @@ void one_color_all(int cred, int cgrn, int cblu) {       //-SET ALL LEDS TO ONE 
 }
 
 void one_color_all_HSV(byte hue, byte sat, byte val) {       //-SET ALL LEDS TO ONE COLOR
+  Serial.println("show led sate");
+  Serial.println("H \t S \t V");
   for (int i = 0 ; i < LED_COUNT; i++ ) {
     leds[i] = CHSV(hue, sat, val);
+    Serial.println(String(leds[i].r) + "\t" + String(leds[i].g) + "\t" + String(leds[i].b));
   }
-      Serial.println("show led sate");
-      Serial.println("H \t S \t V");
-      Serial.println(String(hue) + "\t" + String(sat) + "\t" + String(val));
+  //      Serial.println("show led sate");
+  //      Serial.println("H \t S \t V");
+  //      Serial.println(String(hue) + "\t" + String(sat) + "\t" + String(val));
 }
 
 
@@ -32,7 +35,7 @@ void color_bounce() {                        //-m5-BOUNCE COLOR (SINGLE LED)
       bouncedirection = false;
     }
   }
-  
+
   for (int i = 0; i < LED_COUNT; i++ ) {
     if (i == idex) {
       leds[i] = CHSV(thishue, thissat, 255);

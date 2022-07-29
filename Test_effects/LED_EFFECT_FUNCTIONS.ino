@@ -4,6 +4,13 @@ void one_color_all(int cred, int cgrn, int cblu) {       //-SET ALL LEDS TO ONE 
   }
 }
 
+void one_color_all_HSV(byte hue, byte sat, byte val) {       //-SET ALL LEDS TO ONE COLOR
+  for (int i = 0 ; i < LED_COUNT; i++ ) {
+    leds[i] = CHSV(hue, sat, val);
+  }
+}
+
+
 //------------------------LED EFFECT FUNCTIONS------------------------
 
 

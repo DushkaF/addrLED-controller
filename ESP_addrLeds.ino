@@ -107,10 +107,10 @@ void setup()
 
 void loop() {
   dnsServer.processNextRequest();
-
   if (Serial.available() > 0) {
     change_mode(Serial.parseInt());               // меняем режим через change_mode (там для каждого режима стоят цвета и задержки)
     Serial.println("-> " + String(ledMode));
+    Serial.flush();
   }
   ledEffect(ledMode);
 }
