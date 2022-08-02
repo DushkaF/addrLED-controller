@@ -31,10 +31,10 @@
 //#define APPSK  "thereisnospoon"
 IPAddress apIP(192, 168, 4, 1);
 
-#define LED_COUNT 16          // число светодиодов в кольце/ленте
-#define LED_DT 2             // пин, куда подключен DIN ленты
+#define LED_COUNT 8          // число светодиодов в кольце/ленте
+#define LED_DT 4             // пин, куда подключен DIN ленты
 
-int max_bright = 100;          // максимальная яркость (0 - 255)
+int max_bright = 50;          // максимальная яркость (0 - 255)
 
 volatile byte ledMode = 3;
 
@@ -107,7 +107,6 @@ void loop() {
   dnsServer.processNextRequest();
   if (Serial.available() > 0) {
     change_mode(Serial.parseInt());               // меняем режим через change_mode (там для каждого режима стоят цвета и задержки)
-    Serial.println("-> " + String(ledMode));
     Serial.flush();
   }
   ledEffect(ledMode);
@@ -123,31 +122,72 @@ void ledEffect(int ledMode) {
     {0   , 0   , 0xff}
   };
 
+  //  2,4,7,15, 16, 22, 24, 25, 28, 30, 37, 40,
+  //  5, 6, 9, 10, 26, 29, 33, 34, 39 44 - with color
+
   switch (ledMode) {
     case 999: break;                            // пазуа
-    case  2: color_bounce(); break;             // бегающий светодиод
-    case 3: rwb_march(); break;                 // белый синий красный бегут по кругу (ПАТРИОТИЗМ!)
-    case 4: ems_lightsSTROBE(); break;          // полицейская мигалка
-    case 5: rainbowCycle(thisdelay); break;                                        // очень плавная вращающаяся радуга
-    case 6: Strobe(thishue, thissat, thisval, 10, thisdelay, 1000); break;                  // стробоскоп
 
-    case 45: BouncingBalls(0xff, 0, 0, 3); break;                                   // прыгающие мячики
-    case 46: BouncingColoredBalls(3, ballColors); break;                            // прыгающие мячики цветные
+    case  2: rainbow_fade(); break;            // плавная смена цветов всей ленты
+    case  4: random_burst(); break;            // случайная смена цветов
+    case  7: ems_lightsONE(); break;           // вращаются красный и синий // Color can be changed
+    case 15: rwb_march(); break;               // белый синий красный бегут по кругу (ПАТРИОТИЗМ!)
+    case 16: radiation(); break;               // пульсирует значок радиации
+    case 22: flame(); break;                   // эффект пламени
+    case 24: pacman(); break;                  // пакман
+    case 25: random_color_pop(); break;        // безумие случайных вспышек
+    case 28: kitt(); break;                    // случайные вспышки красного в вертикаьной плоскости
+    case 30: new_rainbow_loop(); break;        // крутая плавная вращающаяся радуга
+    case 37: rainbowCycle(thisdelay); break;                                        // очень плавная вращающаяся радуга
+    case 40: Sparkle(0xff, 0xff, 0xff, thisdelay); break;                           // случайные вспышки белого цвета
+
+    // with color choising
+    case  5: color_bounce(); break;            // бегающий светодиод
+    case  6: color_bounceFADE(); break;        // бегающий паровозик светодиодов
+    case  9: flicker(); break;                 // случайный стробоскоп
+    case 10: pulse_one_color_all(); break;     // пульсация одним цветом
+    case 26: ems_lightsSTROBE(); break;        // полицейская мигалка
+    case 29: matrix(); break;                  // зелёненькие бегают по кругу случайно
+    case 33: colorWipe(thishue, thissat, thisval, thisdelay); 
+      colorWipe(0, 0, 0, thisdelay); break;                                // плавное заполнение цветом
+    case 34: CylonBounce(thishue, thissat, thisval, 4, 10, thisdelay); break;                      // бегающие светодиоды 
+    case 39: RunningLights(thishue, thissat, thisval, thisdelay); break;                     // бегущие огни
+    case 44: Strobe(thishue, thissat, thisval, 10, thisdelay, 1000); break;         // стробоскоп
   }
 }
+
+//  2,4,7,15, 16, 22, 24, 25, 28, 30, 37, 40,
+//  5, 6, 9, 10, 26, 29, 33, 34, 39 44 - with color
 
 void change_mode(int newmode) {
   switch (newmode) {
     case 0: one_color_all(0, 0, 0); LEDS.show(); break; //---ALL OFF
     case 1: one_color_all_HSV(thishue, thissat, thisval); LEDS.show(); break; //---ALL ON
-    case 2: thisdelay = 20; thissat = 255; thishue = 0; break;        //---CYLON v1
-    case 3: thisdelay = 80; thissat = 255; break;                     //---MARCH RWB COLORS
-    case 4: thisdelay = 25; thissat = 255; thishue = 0; break;        //---EMERGECNY STROBE
-    case 5: thisdelay = 20; thissat = 255; break;                     // rainbowCycle
-    case 6: thisdelay = 100; break;                    // Strobe
+    case 2: thisdelay = 60; break;                      //---STRIP RAINBOW FADE
+    case 4: thisdelay = 20; break;                      //---RANDOM BURST
+    case 7: thisdelay = 40; thishue = 0; break;         //---POLICE LIGHTS SINGLE
+    case 15: thisdelay = 80; break;                     //---MARCH RWB COLORS
+    case 16: thisdelay = 60; thishue = 95; break;       //---RADIATION SYMBOL
+    case 24: thisdelay = 50; break;                     //---PACMAN
+    case 25: thisdelay = 35; break;                     //---RANDOM COLOR POP
+    case 28: thisdelay = 100; thishue = 0; break;       //---KITT
+    case 30: thisdelay = 15; break;                      //---NEW RAINBOW LOOP
+    case 37: thisdelay = 20; break;                     // rainbowCycle
+    case 40: thisdelay = 0; break;                      // Sparkle
+
+    case 5: thisdelay = 20; break;         //---CYLON v1
+    case 6: thisdelay = 80; break;         //---CYLON v2
+    case 9: thishue = 160;  /*thissat = 50; */ break;         //---STRIP FLICKER
+    case 10: thisdelay = 15; /* thishue = 0; */ break;        //---PULSE COLOR BRIGHTNESS
+    case 26: thisdelay = 25; /* thishue = 0; */ break;        //---EMERGECNY STROBE
+    case 29: thisdelay = 100; /* thishue = 95; */ break;       //---MATRIX RAIN
+    case 33: thisdelay = 50; break;                     // colorWipe
+    case 34: thisdelay = 50; break;                     // CylonBounce
+    case 39: thisdelay = 50; break;                     // RunningLights
+    case 44: thisdelay = 100; break;                    // Strobe
   }
-  bouncedirection = 0;
   one_color_all(0, 0, 0);
   effectTimer = millis();
   ledMode = newmode;
+  Serial.println("-> " + String(ledMode));
 }

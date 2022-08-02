@@ -133,7 +133,7 @@
 
 
 
-input[type="checkbox"] {
+#menu-button input[type="checkbox"] {
   display: none;
 }
 

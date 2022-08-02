@@ -36,10 +36,12 @@ void handlers() {
       StaticJsonDocument<256> doc;
       deserializeJson(doc, json);
       byte newLedMode = doc["effect"].as<int>();
-      thishue = (int)(doc["hue"][0].as<float>() / 360.0 * 255.0);   // Convert 0-360 to 0-255 
-      thissat = (int)(doc["hue"][1].as<float>() * 255.0) ;          // Convert 0-1 to 0-255 
+      thishue = (int)(doc["hue"][0].as<float>() / 360.0 * 255.0);   // Convert 0-360 to 0-255
+      thissat = (int)(doc["hue"][1].as<float>() * 255.0) ;          // Convert 0-1 to 0-255
       thisval = doc["hue"][2].as<int>();
-      change_mode(newLedMode);               // меняем режим через change_mode (там для каждого режима стоят цвета и задержки)  
+      if (newLedMode != ledMode || ledMode == 1) {  // for mod 1 - it is set color 
+//        change_mode(newLedMode);               // меняем режим через change_mode (там для каждого режима стоят цвета и задержки)
+      }
       Serial.println("new led mode " + String(ledMode));
       Serial.println("H \t S \t V");
       Serial.println(String(thishue) + "\t" + String(thissat) + "\t" + String(thisval));
@@ -54,7 +56,7 @@ void handlers() {
       Serial.println(json);
       StaticJsonDocument<256> doc;
       deserializeJson(doc, json);
-//      LED_COUNT = doc["led-count"];
+      //      LED_COUNT = doc["led-count"];
       Serial.println("new led count " + String(doc["led-count"].as<int>()));
     }
     request->send(200);

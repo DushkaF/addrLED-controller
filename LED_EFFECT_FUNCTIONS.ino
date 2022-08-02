@@ -16,8 +16,333 @@ void one_color_all_HSV(byte hue, byte sat, byte val) {       //-SET ALL LEDS TO 
 
 //------------------------LED EFFECT FUNCTIONS------------------------
 
+void rainbow_fade() {                         //-m2-FADE ALL LEDS THROUGH HSV RAINBOW
+  byte rainbow_sat = 255;
+  ihue++;
+  if (ihue > 255) {
+    ihue = 0;
+  }
+  for (int idex = 0 ; idex < LED_COUNT; idex++ ) {
+    leds[idex] = CHSV(ihue, rainbow_sat, thisval);
+  }
+  LEDS.show();
+  delay(thisdelay);
+}
+
+void random_burst() {                         //-m4-RANDOM INDEX/COLOR
+  idex = random(0, LED_COUNT);
+  ihue = random(0, 255);
+  leds[idex] = CHSV(ihue, thissat, 255);
+  LEDS.show();
+  delay(thisdelay);
+}
+
+void ems_lightsONE() {                    //-m7-EMERGENCY LIGHTS (TWO COLOR SINGLE LED)
+  idex++;
+  if (idex >= LED_COUNT) {
+    idex = 0;
+  }
+  int idexR = idex;
+  int idexB = antipodal_index(idexR);
+  int thathue = (thishue + 160) % 255;
+  for (int i = 0; i < LED_COUNT; i++ ) {
+    if (i == idexR) {
+      leds[i] = CHSV(thishue, thissat, 255);
+    }
+    else if (i == idexB) {
+      leds[i] = CHSV(thathue, thissat, 255);
+    }
+    else {
+      leds[i] = CHSV(0, 0, 0);
+    }
+  }
+  LEDS.show();
+  delay(thisdelay);
+}
+
+void radiation() {                   //-m16-SORT OF RADIATION SYMBOLISH-
+  int N3  = int(LED_COUNT / 3);
+  int N6  = int(LED_COUNT / 6);
+  int N12 = int(LED_COUNT / 12);
+  for (int i = 0; i < N6; i++ ) {    //-HACKY, I KNOW...
+    tcount = tcount + .02;
+    if (tcount > 3.14) {
+      tcount = 0.0;
+    }
+    ibright = int(sin(tcount) * 255);
+    int j0 = (i + LED_COUNT - N12) % LED_COUNT;
+    int j1 = (j0 + N3) % LED_COUNT;
+    int j2 = (j1 + N3) % LED_COUNT;
+    leds[j0] = CHSV(thishue, thissat, ibright);
+    leds[j1] = CHSV(thishue, thissat, ibright);
+    leds[j2] = CHSV(thishue, thissat, ibright);
+  }
+  LEDS.show();
+  delay(thisdelay);
+}
+
+void flame() {                                    //-m22-FLAMEISH EFFECT
+  byte flame_sat = 255;
+  int idelay = random(0, 35);
+  float hmin = 0.1;
+  float hmax = 45.0;
+  float hdif = hmax - hmin;
+  int randtemp = random(0, 3);
+  float hinc = (hdif / float(TOP_INDEX)) + randtemp;
+  int ihue = hmin;
+  for (int i = 0; i <= TOP_INDEX; i++ ) {
+    ihue = ihue + hinc;
+    leds[i] = CHSV(ihue, flame_sat, thisval);
+    int ih = horizontal_index(i);
+    leds[ih] = CHSV(ihue, flame_sat, thisval);
+    leds[TOP_INDEX].r = 255;
+    leds[TOP_INDEX].g = 255;
+    leds[TOP_INDEX].b = 255;
+    LEDS.show();
+    delay(idelay);
+  }
+}
+
+void pacman() {                                  //-m24-REALLY TERRIBLE PACMAN CHOMPING EFFECT
+  int s = int(LED_COUNT / 4);
+  lcount++;
+  if (lcount > 5) {
+    lcount = 0;
+  }
+  if (lcount == 0) {
+    for (int i = 0 ; i < LED_COUNT; i++ ) {
+      set_color_led(i, 255, 255, 0);
+    }
+  }
+  if (lcount == 1 || lcount == 5) {
+    for (int i = 0 ; i < LED_COUNT; i++ ) {
+      set_color_led(i, 255, 255, 0);
+    }
+    leds[s].r = 0; leds[s].g = 0; leds[s].b = 0;
+  }
+  if (lcount == 2 || lcount == 4) {
+    for (int i = 0 ; i < LED_COUNT; i++ ) {
+      set_color_led(i, 255, 255, 0);
+    }
+    leds[s - 1].r = 0; leds[s - 1].g = 0; leds[s - 1].b = 0;
+    leds[s].r = 0; leds[s].g = 0; leds[s].b = 0;
+    leds[s + 1].r = 0; leds[s + 1].g = 0; leds[s + 1].b = 0;
+  }
+  if (lcount == 3) {
+    for (int i = 0 ; i < LED_COUNT; i++ ) {
+      set_color_led(i, 255, 255, 0);
+    }
+    leds[s - 2].r = 0; leds[s - 2].g = 0; leds[s - 2].b = 0;
+    leds[s - 1].r = 0; leds[s - 1].g = 0; leds[s - 1].b = 0;
+    leds[s].r = 0; leds[s].g = 0; leds[s].b = 0;
+    leds[s + 1].r = 0; leds[s + 1].g = 0; leds[s + 1].b = 0;
+    leds[s + 2].r = 0; leds[s + 2].g = 0; leds[s + 2].b = 0;
+  }
+  LEDS.show();
+  delay(thisdelay);
+}
+
+void random_color_pop() {                         //-m25-RANDOM COLOR POP
+  idex = random(0, LED_COUNT);
+  ihue = random(0, 255);
+  one_color_all(0, 0, 0);
+  leds[idex] = CHSV(ihue, thissat, 255);
+  LEDS.show();
+  delay(thisdelay);
+}
+
+void kitt() {                                     //-m28-KNIGHT INDUSTIES 2000
+  int rand = random(0, TOP_INDEX);
+  for (int i = 0; i < rand; i++ ) {
+    leds[TOP_INDEX + i] = CHSV(thishue, thissat, 255);
+    leds[TOP_INDEX - i] = CHSV(thishue, thissat, 255);
+    LEDS.show();
+    delay(thisdelay / rand);
+  }
+  for (int i = rand; i > 0; i-- ) {
+    leds[TOP_INDEX + i] = CHSV(thishue, thissat, 0);
+    leds[TOP_INDEX - i] = CHSV(thishue, thissat, 0);
+    LEDS.show();
+    delay(thisdelay / rand);
+  }
+}
+
+void new_rainbow_loop() {                      //-m88-RAINBOW FADE FROM FAST_SPI2
+  ihue -= 1;
+  fill_rainbow( leds, LED_COUNT, ihue );
+  LEDS.show();
+  delay(thisdelay);
+}
+
+void Sparkle(byte red, byte green, byte blue, int SpeedDelay) {
+  int Pixel = random(LED_COUNT);
+  setPixel(Pixel, red, green, blue);
+  FastLED.show();
+  delay(SpeedDelay);
+  setPixel(Pixel, 0, 0, 0);
+}
+
+void color_bounceFADE() {                    //-m6-BOUNCE COLOR (SIMPLE MULTI-LED FADE)
+  if (bouncedirection == 0) {
+    idex = idex + 1;
+    if (idex == LED_COUNT) {
+      bouncedirection = 1;
+      idex = idex - 1;
+    }
+  }
+  if (bouncedirection == 1) {
+    idex = idex - 1;
+    if (idex == 0) {
+      bouncedirection = 0;
+    }
+  }
+  int iL1 = adjacent_cw(idex);
+  int iL2 = adjacent_cw(iL1);
+  int iL3 = adjacent_cw(iL2);
+  int iR1 = adjacent_ccw(idex);
+  int iR2 = adjacent_ccw(iR1);
+  int iR3 = adjacent_ccw(iR2);
+  for (int i = 0; i < LED_COUNT; i++ ) {
+    if (i == idex) {
+      leds[i] = CHSV(thishue, thissat, 255);
+    }
+    else if (i == iL1) {
+      leds[i] = CHSV(thishue, thissat, 150);
+    }
+    else if (i == iL2) {
+      leds[i] = CHSV(thishue, thissat, 80);
+    }
+    else if (i == iL3) {
+      leds[i] = CHSV(thishue, thissat, 20);
+    }
+    else if (i == iR1) {
+      leds[i] = CHSV(thishue, thissat, 150);
+    }
+    else if (i == iR2) {
+      leds[i] = CHSV(thishue, thissat, 80);
+    }
+    else if (i == iR3) {
+      leds[i] = CHSV(thishue, thissat, 20);
+    }
+    else {
+      leds[i] = CHSV(0, 0, 0);
+    }
+  }
+  LEDS.show();
+  delay(thisdelay);
+}
+
+void flicker() {                          //-m9-FLICKER EFFECT
+  int random_bright = random(0, thisval);
+  int random_delay = random(10, 100);
+  int random_bool = random(0, random_bright);
+  if (random_bool < 10) {
+    for (int i = 0 ; i < LED_COUNT; i++ ) {
+      leds[i] = CHSV(thishue, thissat, random_bright);
+    }
+    LEDS.show();
+    delay(random_delay);
+  }
+}
+
+void pulse_one_color_all() {              //-m10-PULSE BRIGHTNESS ON ALL LEDS TO ONE COLOR
+  if (bouncedirection == 0) {
+    ibright++;
+    if (ibright >= 255) {
+      bouncedirection = 1;
+    }
+  }
+  if (bouncedirection == 1) {
+    ibright = ibright - 1;
+    if (ibright <= 1) {
+      bouncedirection = 0;
+    }
+  }
+  for (int idex = 0 ; idex < LED_COUNT; idex++) {
+    leds[idex] = CHSV(thishue, thissat, ibright);
+  }
+  LEDS.show();
+  delay(thisdelay);
+}
+
+void matrix() {                                   //-m29-ONE LINE MATRIX
+  int rand = random(0, 100);
+  if (rand > 90) {
+    leds[0] = CHSV(thishue, thissat, thisval);
+  }
+  else {
+    leds[0] = CHSV(thishue, thissat, 0);
+  }
+  copy_led_array();
+  for (int i = 1; i < LED_COUNT; i++ ) {
+    leds[i].r = ledsX[i - 1][0];
+    leds[i].g = ledsX[i - 1][1];
+    leds[i].b = ledsX[i - 1][2];
+  }
+  LEDS.show();
+  delay(thisdelay);
+}
+
+void colorWipe(byte hue, byte sat, byte val, int SpeedDelay) {
+  for (uint16_t i = 0; i < LED_COUNT; i++) {
+    leds[i] = CHSV(hue, sat, val);
+    FastLED.show();
+    delay(SpeedDelay);
+  }
+}
+
+void CylonBounce(byte hue, byte sat, byte val, int EyeSize, int SpeedDelay, int ReturnDelay) {
+
+  for (int i = 0; i < LED_COUNT - EyeSize - 2; i++) {
+    setAll(0, 0, 0);
+    leds[i] = CHSV(hue, sat, val / 10);
+    for (int j = 1; j <= EyeSize; j++) {
+      leds[i + j] = CHSV(hue, sat, val);
+    }
+    leds[i + EyeSize + 1] = CHSV(hue, sat, val / 10);
+    FastLED.show();
+    delay(SpeedDelay);
+  }
+
+  delay(ReturnDelay);
+
+  for (int i = LED_COUNT - EyeSize - 2; i > 0; i--) {
+    setAll(0, 0, 0);
+    leds[i] = CHSV(hue, sat, val / 10);
+    for (int j = 1; j <= EyeSize; j++) {
+      leds[i + j] = CHSV(hue, sat, val);
+    }
+    leds[i + EyeSize + 1] = CHSV(hue, sat, val / 10);
+    FastLED.show();
+    delay(SpeedDelay);
+  }
+
+  delay(ReturnDelay);
+}
+
+void RunningLights(byte hue, byte sat, byte val, int WaveDelay) {
+  int Position = 0;
+
+  for (int i = 0; i < LED_COUNT * 2; i++)
+  {
+    Position++; // = 0; //Position + Rate;
+    for (int i = 0; i < LED_COUNT; i++) {
+      // sine wave, 3 offset waves make a rainbow!
+      //float level = sin(i+Position) * 127 + 128;
+      //setPixel(i,level,0,0);
+      //float level = sin(i+Position) * 127 + 128;
+      leds[i] = CHSV(hue, sat, ((sin(i + Position) * 127 + 128) / 255)*val);
+    }
+
+    FastLED.show();
+    delay(WaveDelay);
+  }
+}
+
+// ------------------------------------ Rewtited --------------------------
+
 void color_bounce() {                        //-m5-BOUNCE COLOR (SINGLE LED)
-  if (effectTimer - millis() <= 0) {
+  if (effectTimer <= millis()) {
     if (!bouncedirection) {
       idex = idex + 1;
       if (idex == LED_COUNT) {
@@ -33,7 +358,7 @@ void color_bounce() {                        //-m5-BOUNCE COLOR (SINGLE LED)
 
     for (int i = 0; i < LED_COUNT; i++ ) {
       if (i == idex) {
-        leds[i] = CHSV(thishue, thissat, 255);
+        leds[i] = CHSV(thishue, thissat, thisval);
       }
       else {
         leds[i] = CHSV(0, 0, 0);
@@ -42,11 +367,10 @@ void color_bounce() {                        //-m5-BOUNCE COLOR (SINGLE LED)
     LEDS.show();
     effectTimer = millis() + thisdelay;
   }
-  //  delay(thisdelay);
 }
 
 void rwb_march() {                    //-m15-R,W,B MARCH CCW
-  if (effectTimer - millis() <= 0) {
+  if (effectTimer <=  millis()) {
     copy_led_array();
     int iCCW;
     idex++;
@@ -87,10 +411,12 @@ void ems_lightsSTROBE() {                  //-m26-EMERGENCY LIGHTS (STROBE LEFT/
 
   static boolean ems_State;
 
-  if (ems_State){
+  if (ems_State) {
     Strobe(thishue, thissat, thisval, 5, thisdelay, 0);
+    ems_State = false;
   } else {
     Strobe(thathue, thissat, thisval, 5, thisdelay, 0);
+    ems_State = true;
   }
 }
 
@@ -102,7 +428,7 @@ void rainbowCycle(int SpeedDelay) { //todo beauty code style
   uint16_t i;
 
   if (rCycleJ < 256 * 5) { // 5 cycles of all colors on wheel
-    if (effectTimer - millis() <= 0) {
+    if (effectTimer <= millis()) {
       for (i = 0; i < LED_COUNT; i++) {
         c = Wheel(((i * 256 / LED_COUNT) + rCycleJ) & 255);
         setPixel(i, *c, *(c + 1), *(c + 2));
@@ -147,7 +473,7 @@ void Strobe(byte hue, byte sat, byte val, int StrobeCount, int FlashDelay, int E
 
   if (!strobeOff) {
     if (strobeJ < StrobeCount) {
-      if (effectTimer - millis() <= 0) {
+      if (effectTimer <= millis()) {
         if (!strobeState) {
           one_color_all_HSV(hue, sat, val);
           //      delay(FlashDelay);
@@ -166,104 +492,10 @@ void Strobe(byte hue, byte sat, byte val, int StrobeCount, int FlashDelay, int E
       effectTimer = millis() + EndPause;
     }
   } else {
-    if (effectTimer - millis() <= 0) {
+    if (effectTimer <= millis()) {
       strobeOff = false;
       strobeJ = 0;
     }
   }
   //  delay(EndPause);
-}
-
-//-------------------------------BouncingBalls---------------------------------------
-void BouncingBalls(byte red, byte green, byte blue, int BallCount) {
-  float Gravity = -9.81;
-  int StartHeight = 1;
-
-  float Height[BallCount];
-  float ImpactVelocityStart = sqrt( -2 * Gravity * StartHeight );
-  float ImpactVelocity[BallCount];
-  float TimeSinceLastBounce[BallCount];
-  int   Position[BallCount];
-  long  ClockTimeSinceLastBounce[BallCount];
-  float Dampening[BallCount];
-
-  for (int i = 0 ; i < BallCount ; i++) {
-    ClockTimeSinceLastBounce[i] = millis();
-    Height[i] = StartHeight;
-    Position[i] = 0;
-    ImpactVelocity[i] = ImpactVelocityStart;
-    TimeSinceLastBounce[i] = 0;
-    Dampening[i] = 0.90 - float(i) / pow(BallCount, 2);
-  }
-
-  while (millis() - last_change < change_time) {
-    for (int i = 0 ; i < BallCount ; i++) {
-      TimeSinceLastBounce[i] =  millis() - ClockTimeSinceLastBounce[i];
-      Height[i] = 0.5 * Gravity * pow( TimeSinceLastBounce[i] / 1000 , 2.0 ) + ImpactVelocity[i] * TimeSinceLastBounce[i] / 1000;
-
-      if ( Height[i] < 0 ) {
-        Height[i] = 0;
-        ImpactVelocity[i] = Dampening[i] * ImpactVelocity[i];
-        ClockTimeSinceLastBounce[i] = millis();
-
-        if ( ImpactVelocity[i] < 0.01 ) {
-          ImpactVelocity[i] = ImpactVelocityStart;
-        }
-      }
-      Position[i] = round( Height[i] * (LED_COUNT - 1) / StartHeight);
-    }
-
-    for (int i = 0 ; i < BallCount ; i++) {
-      setPixel(Position[i], red, green, blue);
-    }
-    FastLED.show();
-    setAll(0, 0, 0);
-  }
-}
-
-//-------------------------------BouncingColoredBalls---------------------------------------
-void BouncingColoredBalls(int BallCount, byte colors[][3]) {
-  float Gravity = -9.81;
-  int StartHeight = 1;
-
-  float Height[BallCount];
-  float ImpactVelocityStart = sqrt( -2 * Gravity * StartHeight );
-  float ImpactVelocity[BallCount];
-  float TimeSinceLastBounce[BallCount];
-  int   Position[BallCount];
-  long  ClockTimeSinceLastBounce[BallCount];
-  float Dampening[BallCount];
-
-  for (int i = 0 ; i < BallCount ; i++) {
-    ClockTimeSinceLastBounce[i] = millis();
-    Height[i] = StartHeight;
-    Position[i] = 0;
-    ImpactVelocity[i] = ImpactVelocityStart;
-    TimeSinceLastBounce[i] = 0;
-    Dampening[i] = 0.90 - float(i) / pow(BallCount, 2);
-  }
-
-  while (millis() - last_change < change_time) {
-    for (int i = 0 ; i < BallCount ; i++) {
-      TimeSinceLastBounce[i] =  millis() - ClockTimeSinceLastBounce[i];
-      Height[i] = 0.5 * Gravity * pow( TimeSinceLastBounce[i] / 1000 , 2.0 ) + ImpactVelocity[i] * TimeSinceLastBounce[i] / 1000;
-
-      if ( Height[i] < 0 ) {
-        Height[i] = 0;
-        ImpactVelocity[i] = Dampening[i] * ImpactVelocity[i];
-        ClockTimeSinceLastBounce[i] = millis();
-
-        if ( ImpactVelocity[i] < 0.01 ) {
-          ImpactVelocity[i] = ImpactVelocityStart;
-        }
-      }
-      Position[i] = round( Height[i] * (LED_COUNT - 1) / StartHeight);
-    }
-
-    for (int i = 0 ; i < BallCount ; i++) {
-      setPixel(Position[i], colors[i][0], colors[i][1], colors[i][2]);
-    }
-    FastLED.show();
-    setAll(0, 0, 0);
-  }
 }
