@@ -8,113 +8,113 @@ void one_color_all(int cred, int cgrn, int cblu) {       //-SET ALL LEDS TO ONE 
 }
 
 void one_color_all_HSV(byte hue, byte sat, byte val) {       //-SET ALL LEDS TO ONE COLOR
-  Serial.println("show led sate");
-  Serial.println("H \t S \t V");
   for (int i = 0 ; i < LED_COUNT; i++ ) {
     leds[i] = CHSV(hue, sat, val);
-    Serial.println(String(leds[i].r) + "\t" + String(leds[i].g) + "\t" + String(leds[i].b));
   }
-  //      Serial.println("show led sate");
-  //      Serial.println("H \t S \t V");
-  //      Serial.println(String(hue) + "\t" + String(sat) + "\t" + String(val));
 }
 
 
 //------------------------LED EFFECT FUNCTIONS------------------------
 
 void color_bounce() {                        //-m5-BOUNCE COLOR (SINGLE LED)
-  if (!bouncedirection) {
-    idex = idex + 1;
-    if (idex == LED_COUNT) {
-      bouncedirection = true;
+  if (effectTimer - millis() <= 0) {
+    if (!bouncedirection) {
+      idex = idex + 1;
+      if (idex == LED_COUNT) {
+        bouncedirection = true;
+        idex = idex - 1;
+      }
+    } else {
       idex = idex - 1;
+      if (idex == 0) {
+        bouncedirection = false;
+      }
     }
-  } else {
-    idex = idex - 1;
-    if (idex == 0) {
-      bouncedirection = false;
-    }
-  }
 
-  for (int i = 0; i < LED_COUNT; i++ ) {
-    if (i == idex) {
-      leds[i] = CHSV(thishue, thissat, 255);
+    for (int i = 0; i < LED_COUNT; i++ ) {
+      if (i == idex) {
+        leds[i] = CHSV(thishue, thissat, 255);
+      }
+      else {
+        leds[i] = CHSV(0, 0, 0);
+      }
     }
-    else {
-      leds[i] = CHSV(0, 0, 0);
-    }
+    LEDS.show();
+    effectTimer = millis() + thisdelay;
   }
-  LEDS.show();
-  delay(thisdelay);
+  //  delay(thisdelay);
 }
 
 void rwb_march() {                    //-m15-R,W,B MARCH CCW
-  copy_led_array();
-  int iCCW;
-  idex++;
-  if (idex > 2) {
-    idex = 0;
+  if (effectTimer - millis() <= 0) {
+    copy_led_array();
+    int iCCW;
+    idex++;
+    if (idex > 2) {
+      idex = 0;
+    }
+    switch (idex) {
+      case 0:
+        leds[0].r = 255;
+        leds[0].g = 0;
+        leds[0].b = 0;
+        break;
+      case 1:
+        leds[0].r = 255;
+        leds[0].g = 255;
+        leds[0].b = 255;
+        break;
+      case 2:
+        leds[0].r = 0;
+        leds[0].g = 0;
+        leds[0].b = 255;
+        break;
+    }
+    for (int i = 1; i < LED_COUNT; i++ ) {
+      iCCW = adjacent_ccw(i);
+      leds[i].r = ledsX[iCCW][0];
+      leds[i].g = ledsX[iCCW][1];
+      leds[i].b = ledsX[iCCW][2];
+    }
+    LEDS.show();
+    effectTimer = millis() + thisdelay;
   }
-  switch (idex) {
-    case 0:
-      leds[0].r = 255;
-      leds[0].g = 0;
-      leds[0].b = 0;
-      break;
-    case 1:
-      leds[0].r = 255;
-      leds[0].g = 255;
-      leds[0].b = 255;
-      break;
-    case 2:
-      leds[0].r = 0;
-      leds[0].g = 0;
-      leds[0].b = 255;
-      break;
-  }
-  for (int i = 1; i < LED_COUNT; i++ ) {
-    iCCW = adjacent_ccw(i);
-    leds[i].r = ledsX[iCCW][0];
-    leds[i].g = ledsX[iCCW][1];
-    leds[i].b = ledsX[iCCW][2];
-  }
-  LEDS.show();
-  delay(thisdelay);
+  //  delay(thisdelay);
 }
 
 void ems_lightsSTROBE() {                  //-m26-EMERGENCY LIGHTS (STROBE LEFT/RIGHT)
-  int thishue = 0;
   int thathue = (thishue + 160) % 255;
-  for (int x = 0 ; x < 5; x++ ) {
-    for (int i = 0 ; i < TOP_INDEX; i++ ) {
-      leds[i] = CHSV(thishue, thissat, 255);
-    }
-    LEDS.show(); delay(thisdelay);
-    one_color_all(0, 0, 0);
-    LEDS.show(); delay(thisdelay);
-  }
-  for (int x = 0 ; x < 5; x++ ) {
-    for (int i = TOP_INDEX ; i < LED_COUNT; i++ ) {
-      leds[i] = CHSV(thathue, thissat, 255);
-    }
-    LEDS.show(); delay(thisdelay);
-    one_color_all(0, 0, 0);
-    LEDS.show(); delay(thisdelay);
+
+  static boolean ems_State;
+
+  if (ems_State){
+    Strobe(thishue, thissat, thisval, 5, thisdelay, 0);
+  } else {
+    Strobe(thathue, thissat, thisval, 5, thisdelay, 0);
   }
 }
 
 //-------------------------------newKITT---------------------------------------
-void rainbowCycle(int SpeedDelay) {
-  byte *c;
-  uint16_t i, j;
+void rainbowCycle(int SpeedDelay) { //todo beauty code style
+  static uint16_t rCycleJ;
 
-  for (j = 0; j < 256 * 5; j++) { // 5 cycles of all colors on wheel
-    for (i = 0; i < LED_COUNT; i++) {
-      c = Wheel(((i * 256 / LED_COUNT) + j) & 255);
-      setPixel(i, *c, *(c + 1), *(c + 2));
+  byte *c;
+  uint16_t i;
+
+  if (rCycleJ < 256 * 5) { // 5 cycles of all colors on wheel
+    if (effectTimer - millis() <= 0) {
+      for (i = 0; i < LED_COUNT; i++) {
+        c = Wheel(((i * 256 / LED_COUNT) + rCycleJ) & 255);
+        setPixel(i, *c, *(c + 1), *(c + 2));
+      }
+      FastLED.show();
+      rCycleJ++;
+      effectTimer = millis() + SpeedDelay;
+      //    delay(SpeedDelay);
     }
-    FastLED.show();
-    delay(SpeedDelay);
+  }
+  else {
+    rCycleJ = 0;
   }
 }
 
@@ -141,16 +141,37 @@ byte * Wheel(byte WheelPos) {
 }
 
 //-------------------------------Strobe---------------------------------------
-void Strobe(byte red, byte green, byte blue, int StrobeCount, int FlashDelay, int EndPause) {
-  for (int j = 0; j < StrobeCount; j++) {
-    setAll(red, green, blue);
-    FastLED.show();
-    delay(FlashDelay);
-    setAll(0, 0, 0);
-    FastLED.show();
-    delay(FlashDelay);
+void Strobe(byte hue, byte sat, byte val, int StrobeCount, int FlashDelay, int EndPause) {
+  static int strobeJ;
+  static boolean strobeState, strobeOff;
+
+  if (!strobeOff) {
+    if (strobeJ < StrobeCount) {
+      if (effectTimer - millis() <= 0) {
+        if (!strobeState) {
+          one_color_all_HSV(hue, sat, val);
+          //      delay(FlashDelay);
+        } else {
+          setAll(0, 0, 0);
+          //      delay(FlashDelay);
+          strobeJ++;
+        }
+        FastLED.show();
+        strobeState = !strobeState;
+
+        effectTimer = millis() + FlashDelay;
+      }
+    } else {
+      strobeOff = true;
+      effectTimer = millis() + EndPause;
+    }
+  } else {
+    if (effectTimer - millis() <= 0) {
+      strobeOff = false;
+      strobeJ = 0;
+    }
   }
-  delay(EndPause);
+  //  delay(EndPause);
 }
 
 //-------------------------------BouncingBalls---------------------------------------

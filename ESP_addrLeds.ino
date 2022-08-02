@@ -60,9 +60,7 @@ boolean bouncedirection = 0;     //-SWITCH FOR COLOR BOUNCE (0-1)
 float tcount = 0.0;          //-INC VAR FOR SIN LOOPS
 int lcount = 0;              //-ANOTHER COUNTING VAR
 
-volatile uint32_t btnTimer;
-volatile byte modeCounter;
-volatile boolean changeFlag;
+uint32_t effectTimer;
 // ---------------СЛУЖЕБНЫЕ ПЕРЕМЕННЫЕ-----------------
 
 // Create AsyncWebServer object on port 80
@@ -131,7 +129,7 @@ void ledEffect(int ledMode) {
     case 3: rwb_march(); break;                 // белый синий красный бегут по кругу (ПАТРИОТИЗМ!)
     case 4: ems_lightsSTROBE(); break;          // полицейская мигалка
     case 5: rainbowCycle(thisdelay); break;                                        // очень плавная вращающаяся радуга
-    case 6: Strobe(0xff, 0xff, 0xff, 10, thisdelay, 1000); break;                  // стробоскоп
+    case 6: Strobe(thishue, thissat, thisval, 10, thisdelay, 1000); break;                  // стробоскоп
 
     case 45: BouncingBalls(0xff, 0, 0, 3); break;                                   // прыгающие мячики
     case 46: BouncingColoredBalls(3, ballColors); break;                            // прыгающие мячики цветные
@@ -146,9 +144,10 @@ void change_mode(int newmode) {
     case 3: thisdelay = 80; thissat = 255; break;                     //---MARCH RWB COLORS
     case 4: thisdelay = 25; thissat = 255; thishue = 0; break;        //---EMERGECNY STROBE
     case 5: thisdelay = 20; thissat = 255; break;                     // rainbowCycle
-    case 6: thisdelay = 100; thissat = 255; break;                    // Strobe
+    case 6: thisdelay = 100; break;                    // Strobe
   }
   bouncedirection = 0;
   one_color_all(0, 0, 0);
+  effectTimer = millis();
   ledMode = newmode;
 }

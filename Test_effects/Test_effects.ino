@@ -4,7 +4,6 @@
 #define LED_DT 2             // пин, куда подключен DIN ленты
 
 int max_bright = 100;          // максимальная яркость (0 - 255)
-boolean adapt_light = 1;       // адаптивная подсветка (1 - включить, 0 - выключить)
 
 unsigned long change_time, last_change, last_bright;
 int new_bright;
