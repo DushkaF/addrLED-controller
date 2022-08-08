@@ -1,0 +1,68 @@
+@media only screen and (max-width: 1200px) and (min-width: 992px){
+  #wrapper {
+    width: 40%;
+    height: 90%;
+  }
+  #color-wheel-background {
+    --wheel-radius: 300px; /* it is variable! */
+  }
+  :root {
+    --range-height: 60px;
+  }
+  html, body {overflow: visible}
+}
+
+@media only screen and (max-width: 992px) and (min-width: 768px) {
+  #wrapper {
+    width: 60%;
+  }
+
+  #color-wheel-background {
+    --wheel-radius: 450px; /* it is variable! */
+  }
+  :root {
+    --range-height: 60px;
+  }
+  select {
+    font-size: 30px;
+  }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 480px) {
+  #wrapper {
+    width: 75%;
+  }
+
+  #color-wheel-background {
+    --wheel-radius: 350px; /* it is variable! */
+  }
+
+  :root {
+    --range-height: 60px;
+  }
+}
+@media only screen and (max-width: 480px) and (min-width: 320px) {
+  #wrapper {
+    width: 75%;
+  }
+
+  #color-wheel-background {
+    --wheel-radius: 250px; /* it is variable! */
+  }
+  :root {
+    --range-height: 40px;
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  #wrapper {
+    width: 80%;
+  }
+
+  #color-wheel-background {
+    --wheel-radius: 200px; /* it is variable! */
+  }
+  :root {
+    --range-height: 35px;
+  }
+}

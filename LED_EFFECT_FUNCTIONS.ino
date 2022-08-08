@@ -234,7 +234,7 @@ void color_bounceFADE() {                    //-m6-BOUNCE COLOR (SIMPLE MULTI-LE
 
 void flicker() {                          //-m9-FLICKER EFFECT
   int random_bright = random(0, thisval);
-  int random_delay = random(10, 100);
+  int random_delay = random(10, thisdelay);
   int random_bool = random(0, random_bright);
   if (random_bool < 10) {
     for (int i = 0 ; i < LED_COUNT; i++ ) {

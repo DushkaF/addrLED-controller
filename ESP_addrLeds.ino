@@ -36,7 +36,7 @@ IPAddress apIP(192, 168, 4, 1);
 
 int max_bright = 50;          // максимальная яркость (0 - 255)
 
-volatile byte ledMode = 3;
+volatile byte ledMode = 0;
 
 
 // ---------------СЛУЖЕБНЫЕ ПЕРЕМЕННЫЕ-----------------
@@ -51,6 +51,7 @@ int thisstep = 10;           //-FX LOOPS  VAR
 int thishue = 0;             //-FX LOOPS  VAR
 int thissat = 255;           //-FX LOOPS  VAR
 int thisval = 0;
+float effectSpeed = 1.0;      // variable for changing effect speed
 
 int idex = 0;                //-LED INDEX (0 to LED_COUNT-1)
 int ihue = 0;                //-HUE (0-255)
@@ -60,7 +61,8 @@ boolean bouncedirection = 0;     //-SWITCH FOR COLOR BOUNCE (0-1)
 float tcount = 0.0;          //-INC VAR FOR SIN LOOPS
 int lcount = 0;              //-ANOTHER COUNTING VAR
 
-uint32_t effectTimer;
+
+uint32_t effectTimer;        // main loop timer variable
 // ---------------СЛУЖЕБНЫЕ ПЕРЕМЕННЫЕ-----------------
 
 // Create AsyncWebServer object on port 80
@@ -148,9 +150,9 @@ void ledEffect(int ledMode) {
     case 10: pulse_one_color_all(); break;     // пульсация одним цветом
     case 26: ems_lightsSTROBE(); break;        // полицейская мигалка
     case 29: matrix(); break;                  // зелёненькие бегают по кругу случайно
-    case 33: colorWipe(thishue, thissat, thisval, thisdelay); 
+    case 33: colorWipe(thishue, thissat, thisval, thisdelay);
       colorWipe(0, 0, 0, thisdelay); break;                                // плавное заполнение цветом
-    case 34: CylonBounce(thishue, thissat, thisval, 4, 10, thisdelay); break;                      // бегающие светодиоды 
+    case 34: CylonBounce(thishue, thissat, thisval, 4, 10, thisdelay); break;                      // бегающие светодиоды
     case 39: RunningLights(thishue, thissat, thisval, thisdelay); break;                     // бегущие огни
     case 44: Strobe(thishue, thissat, thisval, 10, thisdelay, 1000); break;         // стробоскоп
   }
@@ -165,7 +167,7 @@ void change_mode(int newmode) {
     case 1: one_color_all_HSV(thishue, thissat, thisval); LEDS.show(); break; //---ALL ON
     case 2: thisdelay = 60; break;                      //---STRIP RAINBOW FADE
     case 4: thisdelay = 20; break;                      //---RANDOM BURST
-    case 7: thisdelay = 40; thishue = 0; break;         //---POLICE LIGHTS SINGLE
+    case 7: thisdelay = 40; thishue = 0; thissat = 255; break;         //---POLICE LIGHTS SINGLE
     case 15: thisdelay = 80; break;                     //---MARCH RWB COLORS
     case 16: thisdelay = 60; thishue = 95; break;       //---RADIATION SYMBOL
     case 24: thisdelay = 50; break;                     //---PACMAN
@@ -177,7 +179,7 @@ void change_mode(int newmode) {
 
     case 5: thisdelay = 20; break;         //---CYLON v1
     case 6: thisdelay = 80; break;         //---CYLON v2
-    case 9: thishue = 160;  /*thissat = 50; */ break;         //---STRIP FLICKER
+    case 9: thisdelay = 100; /*thishue = 160;  thissat = 50; */ break;         //---STRIP FLICKER
     case 10: thisdelay = 15; /* thishue = 0; */ break;        //---PULSE COLOR BRIGHTNESS
     case 26: thisdelay = 25; /* thishue = 0; */ break;        //---EMERGECNY STROBE
     case 29: thisdelay = 100; /* thishue = 95; */ break;       //---MATRIX RAIN
@@ -186,8 +188,13 @@ void change_mode(int newmode) {
     case 39: thisdelay = 50; break;                     // RunningLights
     case 44: thisdelay = 100; break;                    // Strobe
   }
-  one_color_all(0, 0, 0);
-  effectTimer = millis();
-  ledMode = newmode;
-  Serial.println("-> " + String(ledMode));
+  
+  thisdelay = (int) (((float)thisdelay) / effectSpeed);
+  
+  if (ledMode != newmode) {
+    one_color_all(0, 0, 0);
+    effectTimer = millis();
+    ledMode = newmode;
+    Serial.println("-> " + String(ledMode));
+  }
 }

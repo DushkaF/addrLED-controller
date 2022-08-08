@@ -7,11 +7,12 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <title>LED controller</title>
-    <script type="module" src="../js/wheel.js"></script>
     <script type="module" src="../js/script.js"></script>
-    <link rel="stylesheet" type="text/css" href="../style/style.css" />
+    <script type="module" src="../js/wheel.js"></script>
     <link rel="stylesheet" type="text/css" href="../style/menu.css" />
+    <link rel="stylesheet" type="text/css" href="../style/style.css" />
     <link rel="stylesheet" type="text/css" href="../style/wheel.css" />
+    <link rel="stylesheet" type="text/css" href="../style/adaptive.css" />
   </head>
 
   <body>
@@ -46,7 +47,7 @@
 
         <div id="palette">
           <div class="color-item">
-            <div class="inner-color-item selected-color-item" id="ci-0"></div>
+            <div class="inner-color-item" id="ci-0"></div>
           </div>
           <div class="color-item">
             <div class="inner-color-item" id="ci-1"></div>
@@ -60,12 +61,15 @@
       </div>
 
       <div id="effect-settings" class="settings-block">
-        <input type="checkbox" class="toggle" checked>
+        <label>
+          <input type="checkbox" class="toggle" id="turn-switch" checked>
+          <span class="checkbox-replace"></span>
+        </label>
         <select id="led-mode-select">
-          <option value=0 selected>Simple color</option>
+          <!-- <option value=0>Not loaded</option> -->
         </select>
 
-        <input type="range" id="speed-range" value="0" min="0" max="255" />
+        <input type="range" id="speed-range" value="100" min="50" max="200"/>
       </div>
     </div>
   </body>
