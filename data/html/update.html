@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Upload Firmware</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='../style/update.css'>
+    <script src='../js/update.js'></script>
+</head>
+<body>
+    <div id="wrapper">
+        <div class="content-area">
+            <label for="binary-upload-code" class="menu-paragraph software-update">
+            <input type="file" id="binary-upload-code" path="/update">
+            <h3>Upload binary code</h3>
+            <p class="upload-file-name color-change" id="code-filename" hidden>code.bin</p>
+          </label>
+          <label for="binary-upload-spiffs" class="menu-paragraph software-update">
+            <input type="file" id="binary-upload-spiffs" path="/update">
+            <h3>Upload binary SPIFFS</h3>
+            <p class="upload-file-name color-change" id="spiffs-filename" hidden>spiffs.bin</p>
+          </label>
+        </div>
+        <div class="content-area">
+            <div class="under-paragraph-text">
+          <p>⚠ Attention! The use of unofficial software can damage your device!</p>
+        </div> 
+        <div class="menu-paragraph menu-btn" id="update-btn" path="/update">
+            <h3 show>Update</h3>
+            <h3 id="update-btn-updating" hidden>Updating...</h3>
+            <h3 id="update-btn-success" class="success" hidden>Success!</h3>
+            <h3 id="update-btn-fail" class="fail" hidden>Retry</h3>
+          </div>
+          <hr class="progressbar-border" id="update-progressbar" hidden>
+        </div>
+        </div>
+        
+    </div>
+</body>
+</html>

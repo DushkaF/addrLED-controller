@@ -1,0 +1,141 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+  -webkit-appearance: none;
+}
+
+body {
+  font-family: monospace, monospace;
+  -webkit-appearance: none;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  min-height: 100%;
+  background: #363538;
+  color: #efeae1;
+}
+
+#wrapper {
+  z-index: -1;
+  margin: 0px auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  top: 10%;
+  height: 100%;
+  width: 80%;
+}
+
+.content-area {
+  margin: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border: #efeae1 2px solid;
+  width: 100%;
+  padding: 5%;
+}
+
+.software-update {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 95%;
+  padding: 2%;
+  margin: 2%;
+  border: #efeae1 1px solid;
+}
+
+.software-update h3 {
+  margin-right: 2%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.upload-file-name {
+  flex-basis: 25%;
+  display: block !important;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 40%;
+  color: rgb(255, 214, 10) !important;
+  font-weight: 100;
+
+  animation: fadeInFromNone 0.2s ease-in-out;
+}
+
+.success {
+  color: rgb(48, 209, 88) !important;
+}
+
+.fail {
+  color: rgb(255, 69, 58) !important;
+}
+
+.progressbar-border {
+  align-self: flex-start;
+  margin: 0;
+  width: 100%;
+  background: rgb(255, 214, 10);
+  border: 0;
+  height: 2px;
+  box-shadow: 8px 0px 5px 0px rgb(255 214 10);
+  transition-property: width;
+  transition-duration: 0.5s;
+}
+
+.color-change {
+  transition-property: color;
+  transition-duration: 0.5s;
+}
+
+@keyframes fadeInFromNone {
+  0% {
+    display: none;
+    opacity: 0;
+  }
+
+  1% {
+    display: block;
+    opacity: 0;
+  }
+
+  100% {
+    display: block;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.fade-out {
+  animation: fadeOut 1s ease forwards;
+}
+
+.fade {
+  opacity: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+input[type="file"] {
+  display: none;
+}

@@ -9,6 +9,7 @@
 #include <ESPAsyncWebServer.h>
 #include <ArduinoJson.h>
 #include <DNSServer.h>
+//#include <Update.h>
 
 #ifdef ESP32
 //For ESP32
@@ -61,6 +62,7 @@ boolean bouncedirection = 0;     //-SWITCH FOR COLOR BOUNCE (0-1)
 float tcount = 0.0;          //-INC VAR FOR SIN LOOPS
 int lcount = 0;              //-ANOTHER COUNTING VAR
 
+bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
 
 uint32_t effectTimer;        // main loop timer variable
 // ---------------СЛУЖЕБНЫЕ ПЕРЕМЕННЫЕ-----------------
@@ -112,6 +114,12 @@ void loop() {
     Serial.flush();
   }
   ledEffect(ledMode);
+
+   if (restartRequired) { // check the flag here to determine if a restart is required
+    Serial.printf("Rebooting... \n\r");
+    restartRequired = false;
+    ESP.restart();
+  }
 }
 
 // функция эффектов

@@ -4,6 +4,10 @@ void handlers() {
     request->send(SPIFFS, "/html/index.html");
   });
 
+  server.on("/upd", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/html/update.html");
+  });
+
   // Route to load styles file
   server.on("/style/style.css", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/style/style.css", "text/css");
@@ -14,6 +18,9 @@ void handlers() {
   server.on("/style/menu.css", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/style/menu.css", "text/css");
   });
+  server.on("/style/update.css", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/style/update.css", "text/css");
+  });
 
   // Route to load scripts
   server.on("/js/script.js", HTTP_GET, [](AsyncWebServerRequest * request) {
@@ -21,6 +28,9 @@ void handlers() {
   });
   server.on("/js/wheel.js", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/js/wheel.js", "text/javascript");
+  });
+  server.on("/js/update.js", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/js/update.js", "text/javascript");
   });
 
   // Route to additional content
@@ -73,6 +83,67 @@ void handlers() {
       }
     }
     request->send(200);
+  });
+
+  server.on("/update", HTTP_POST, [](AsyncWebServerRequest * request) {
+    int params = request->params();
+    Serial.println("IN RESPONSE");
+    for (int i = 0; i < params; i++) {
+      AsyncWebParameter* p = request->getParam(i);
+      if (p->isFile()) { //p->isPost() is also true
+        Serial.printf("FILE[%s]: %s, size: %u\n", p->name().c_str(), p->value().c_str(), p->size());
+      } else if (p->isPost()) {
+        Serial.printf("POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
+      } else {
+        Serial.printf("GET[%s]: %s\n", p->name().c_str(), p->value().c_str());
+      }
+    }
+
+    // the request handler is triggered after the upload has finished...
+    // create the response, add header, and send response
+    AsyncWebServerResponse *response = request->beginResponse((Update.hasError()) ? 501 : 200);
+    response->addHeader("Connection", "close");
+    response->addHeader("Access-Control-Allow-Origin", "*");
+    request->send(response);
+    delay(1000);
+    restartRequired = !Update.hasError();;  // Tell the main loop to restart the ESP
+  }, [](AsyncWebServerRequest * request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
+    //Upload handler chunks in data
+    if (!index) { // if index == 0 then this is the first frame of data
+      Serial.printf("UploadStart: %s\n", filename.c_str());
+      Serial.setDebugOutput(true);
+      if (filename.indexOf("ino") != -1) {
+        Serial.println("CODE");
+        Update.runAsync(true);
+        if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000)) {
+          Update.printError(Serial);
+        }
+      }
+      else if (filename.indexOf("spiffs") != -1) {
+        Serial.println("SPIFFS");
+        Update.runAsync(true);
+        if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000), U_FS) {
+          Update.printError(Serial);
+        }
+      }
+    }
+
+    //    Write chunked data to the free sketch space
+    if (!Update.hasError()) {
+      if (Update.write(data, len) != len) {
+        Update.printError(Serial);
+      }
+    }
+
+    if (final) { // if the final flag is set then this is the last frame of data
+      if (Update.end(true)) { //true to set the size to the current progress
+        Serial.printf("Update %s Success: %u B\nRebooting...\n", filename.c_str(), index + len);
+      } else {
+        Update.printError(Serial);
+      }
+      Serial.setDebugOutput(false);
+      Serial.printf("Update Success: %u B\nEnd\n", index + len);
+    }
   });
 
 }
