@@ -1,6 +1,10 @@
 unsigned long change_time, last_change, last_bright;
 int new_bright;
 
+int effectJ;
+boolean effectState, effectFrameState;
+
+
 void one_color_all(int cred, int cgrn, int cblu) {       //-SET ALL LEDS TO ONE COLOR
   for (int i = 0 ; i < LED_COUNT; i++ ) {
     leds[i].setRGB( cred, cgrn, cblu);
@@ -154,8 +158,8 @@ void random_color_pop() {                         //-m25-RANDOM COLOR POP
 void kitt() {                                     //-m28-KNIGHT INDUSTIES 2000
   int rand = random(0, TOP_INDEX);
   for (int i = 0; i < rand; i++ ) {
-    leds[TOP_INDEX + i] = CHSV(thishue, thissat, 255);
-    leds[TOP_INDEX - i] = CHSV(thishue, thissat, 255);
+    leds[TOP_INDEX + i] = CHSV(thishue, thissat, thisval);
+    leds[TOP_INDEX - i] = CHSV(thishue, thissat, thisval);
     LEDS.show();
     delay(thisdelay / rand);
   }
@@ -174,9 +178,36 @@ void new_rainbow_loop() {                      //-m88-RAINBOW FADE FROM FAST_SPI
   delay(thisdelay);
 }
 
-void Sparkle(byte red, byte green, byte blue, int SpeedDelay) {
+//-------------------------------TwinkleRandom---------------------------------------
+void TwinkleRandom(int Count, int SpeedDelay, boolean OnlyOne) {
+  if (!effectFrameState) {
+    if (effectJ < Count) {
+      if (effectTimer <= millis()) {
+        setPixel(random(LED_COUNT), random(0, 255), random(0, 255), random(0, 255));
+        FastLED.show();
+        effectJ++;
+        effectTimer = millis() + SpeedDelay;
+      } else {
+        if (OnlyOne) {
+          setAll(0, 0, 0);
+        }
+      }
+    } else {
+      effectFrameState = true;
+      effectTimer = millis() + SpeedDelay;
+    }
+  } else {
+    if (effectTimer <= millis()) {
+      setAll(0, 0, 0);
+      effectFrameState = false;
+      effectJ = 0;
+    }
+  }
+}
+
+void Sparkle(int SpeedDelay) {
   int Pixel = random(LED_COUNT);
-  setPixel(Pixel, red, green, blue);
+  leds[Pixel] = CHSV(thishue, thissat, ibright);
   FastLED.show();
   delay(SpeedDelay);
   setPixel(Pixel, 0, 0, 0);
@@ -331,7 +362,7 @@ void RunningLights(byte hue, byte sat, byte val, int WaveDelay) {
       //float level = sin(i+Position) * 127 + 128;
       //setPixel(i,level,0,0);
       //float level = sin(i+Position) * 127 + 128;
-      leds[i] = CHSV(hue, sat, ((sin(i + Position) * 127 + 128) / 255)*val);
+      leds[i] = CHSV(hue, sat, ((sin(i + Position) * 127 + 128) / 255) * val);
     }
 
     FastLED.show();
@@ -407,18 +438,28 @@ void rwb_march() {                    //-m15-R,W,B MARCH CCW
 }
 
 void ems_lightsSTROBE() {                  //-m26-EMERGENCY LIGHTS (STROBE LEFT/RIGHT)
-  int thathue = (thishue + 160) % 255;
-
-  static boolean ems_State;
-
-  if (ems_State) {
-    Strobe(thishue, thissat, thisval, 5, thisdelay, 0);
-    ems_State = false;
-  } else {
-    Strobe(thathue, thissat, thisval, 5, thisdelay, 0);
-    ems_State = true;
+  idex++;
+  if (idex >= LED_COUNT) {
+    idex = 0;
   }
+  int idexR = idex;
+  int idexB = antipodal_index(idexR);
+  int thathue = (thishue + 160) % 255;
+  for (int i = 0; i < LED_COUNT; i++ ) {
+    if (i == idexR) {
+      leds[i] = CHSV(thishue, thissat, 255);
+    }
+    else if (i == idexB) {
+      leds[i] = CHSV(thathue, thissat, 255);
+    }
+    else {
+      leds[i] = CHSV(0, 0, 0);
+    }
+  }
+  LEDS.show();
+  delay(thisdelay);
 }
+
 
 //-------------------------------newKITT---------------------------------------
 void rainbowCycle(int SpeedDelay) { //todo beauty code style
@@ -468,33 +509,30 @@ byte * Wheel(byte WheelPos) {
 
 //-------------------------------Strobe---------------------------------------
 void Strobe(byte hue, byte sat, byte val, int StrobeCount, int FlashDelay, int EndPause) {
-  static int strobeJ;
-  static boolean strobeState, strobeOff;
-
-  if (!strobeOff) {
-    if (strobeJ < StrobeCount) {
+  if (!effectFrameState) {
+    if (effectJ < StrobeCount) {
       if (effectTimer <= millis()) {
-        if (!strobeState) {
+        if (!effectState) {
           one_color_all_HSV(hue, sat, val);
           //      delay(FlashDelay);
         } else {
           setAll(0, 0, 0);
           //      delay(FlashDelay);
-          strobeJ++;
+          effectJ++;
         }
         FastLED.show();
-        strobeState = !strobeState;
+        effectState = !effectState;
 
         effectTimer = millis() + FlashDelay;
       }
     } else {
-      strobeOff = true;
+      effectFrameState = true;
       effectTimer = millis() + EndPause;
     }
   } else {
     if (effectTimer <= millis()) {
-      strobeOff = false;
-      strobeJ = 0;
+      effectFrameState = false;
+      effectJ = 0;
     }
   }
   //  delay(EndPause);

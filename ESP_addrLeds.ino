@@ -142,26 +142,27 @@ void ledEffect(int ledMode) {
     case  4: random_burst(); break;            // случайная смена цветов
     case  7: ems_lightsONE(); break;           // вращаются красный и синий // Color can be changed
     case 15: rwb_march(); break;               // белый синий красный бегут по кругу (ПАТРИОТИЗМ!)
-    case 16: radiation(); break;               // пульсирует значок радиации
     case 22: flame(); break;                   // эффект пламени
     case 24: pacman(); break;                  // пакман
     case 25: random_color_pop(); break;        // безумие случайных вспышек
-    case 28: kitt(); break;                    // случайные вспышки красного в вертикаьной плоскости
+    case 26: ems_lightsSTROBE(); break;        // полицейская мигалка
     case 30: new_rainbow_loop(); break;        // крутая плавная вращающаяся радуга
     case 37: rainbowCycle(thisdelay); break;                                        // очень плавная вращающаяся радуга
-    case 40: Sparkle(0xff, 0xff, 0xff, thisdelay); break;                           // случайные вспышки белого цвета
-
+    case 38: TwinkleRandom(20, thisdelay, 1); break;                                // случайные разноцветные включения (1 - танцуют все, 0 - случайный 1 диод)
+    
     // with color choising
     case  5: color_bounce(); break;            // бегающий светодиод
     case  6: color_bounceFADE(); break;        // бегающий паровозик светодиодов
     case  9: flicker(); break;                 // случайный стробоскоп
     case 10: pulse_one_color_all(); break;     // пульсация одним цветом
-    case 26: ems_lightsSTROBE(); break;        // полицейская мигалка
+    case 16: radiation(); break;               // пульсирует значок радиации
+    case 28: kitt(); break;                    // случайные вспышки красного в вертикаьной плоскости
     case 29: matrix(); break;                  // зелёненькие бегают по кругу случайно
     case 33: colorWipe(thishue, thissat, thisval, thisdelay);
       colorWipe(0, 0, 0, thisdelay); break;                                // плавное заполнение цветом
     case 34: CylonBounce(thishue, thissat, thisval, 4, 10, thisdelay); break;                      // бегающие светодиоды
     case 39: RunningLights(thishue, thissat, thisval, thisdelay); break;                     // бегущие огни
+    case 40: Sparkle(thisdelay); break;                           // случайные вспышки белого цвета
     case 44: Strobe(thishue, thissat, thisval, 10, thisdelay, 1000); break;         // стробоскоп
   }
 }
@@ -177,23 +178,24 @@ void change_mode(int newmode) {
     case 4: thisdelay = 20; break;                      //---RANDOM BURST
     case 7: thisdelay = 40; thishue = 0; thissat = 255; break;         //---POLICE LIGHTS SINGLE
     case 15: thisdelay = 80; break;                     //---MARCH RWB COLORS
-    case 16: thisdelay = 60; thishue = 95; break;       //---RADIATION SYMBOL
     case 24: thisdelay = 50; break;                     //---PACMAN
     case 25: thisdelay = 35; break;                     //---RANDOM COLOR POP
-    case 28: thisdelay = 100; thishue = 0; break;       //---KITT
+    case 26: thisdelay = 25; thishue = 0; break;        //---EMERGECNY STROBE
     case 30: thisdelay = 15; break;                      //---NEW RAINBOW LOOP
     case 37: thisdelay = 20; break;                     // rainbowCycle
-    case 40: thisdelay = 0; break;                      // Sparkle
+    case 38: thisdelay = 10; break;                     // rainbowTwinkleSparkle
 
     case 5: thisdelay = 20; break;         //---CYLON v1
     case 6: thisdelay = 80; break;         //---CYLON v2
     case 9: thisdelay = 100; /*thishue = 160;  thissat = 50; */ break;         //---STRIP FLICKER
     case 10: thisdelay = 15; /* thishue = 0; */ break;        //---PULSE COLOR BRIGHTNESS
-    case 26: thisdelay = 25; /* thishue = 0; */ break;        //---EMERGECNY STROBE
+    case 16: thisdelay = 60; break;       //---RADIATION SYMBOL
+    case 28: thisdelay = 100; break;       //---KITT
     case 29: thisdelay = 100; /* thishue = 95; */ break;       //---MATRIX RAIN
     case 33: thisdelay = 50; break;                     // colorWipe
     case 34: thisdelay = 50; break;                     // CylonBounce
     case 39: thisdelay = 50; break;                     // RunningLights
+    case 40: thisdelay = 0; break;                      // 
     case 44: thisdelay = 100; break;                    // Strobe
   }
   

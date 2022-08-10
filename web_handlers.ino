@@ -113,7 +113,8 @@ void handlers() {
       Serial.printf("UploadStart: %s\n", filename.c_str());
       Serial.setDebugOutput(true);
       if (filename.indexOf("ino") != -1) {
-        Serial.println("CODE");
+        Serial.print("CODE ");
+        Serial.println(len);
         Update.runAsync(true);
         if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000)) {
           Update.printError(Serial);
@@ -122,7 +123,7 @@ void handlers() {
       else if (filename.indexOf("spiffs") != -1) {
         Serial.println("SPIFFS");
         Update.runAsync(true);
-        if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000), U_FS) {
+        if (!Update.begin(0xFFFFFFFF, U_FS)) {
           Update.printError(Serial);
         }
       }

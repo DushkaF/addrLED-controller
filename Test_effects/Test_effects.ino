@@ -1,9 +1,9 @@
 #include <FastLED.h>
 
-#define LED_COUNT 16          // число светодиодов в кольце/ленте
-#define LED_DT 2             // пин, куда подключен DIN ленты
+#define LED_COUNT 8          // число светодиодов в кольце/ленте
+#define LED_DT 4             // пин, куда подключен DIN ленты
 
-int max_bright = 100;          // максимальная яркость (0 - 255)
+int max_bright = 50;          // максимальная яркость (0 - 255)
 
 unsigned long change_time, last_change, last_bright;
 int new_bright;
@@ -55,6 +55,7 @@ void loop() {
     ledMode = Serial.parseInt();
     Serial.println("-> " + String(ledMode));
     Serial.flush();
+    change_mode(ledMode);
   }
   ledEffect(ledMode);
 }
