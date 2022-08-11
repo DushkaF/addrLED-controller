@@ -11,3 +11,6 @@
 git stash
 git pull
 ```
+Для создания бинарника SPIFFS:
+  https://github.com/igrr/mkspiffs
+  `.\mkspiffs.exe -c data/ -d 5 -b 8192 -p 256 -s 512000 spiffs.bin`
