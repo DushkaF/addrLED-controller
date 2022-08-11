@@ -1,30 +1,33 @@
-@media only screen and (max-width: 1200px) and (min-width: 992px){
+@media only screen and (max-width: 1500px) and (min-width: 992px){
   #wrapper {
     width: 40%;
-    height: 90%;
   }
   #color-wheel-background {
-    --wheel-radius: 300px; /* it is variable! */
+    --wheel-radius: 250px; /* it is variable! */
   }
   :root {
-    --range-height: 60px;
+    --range-height: 40px;
   }
   html, body {overflow: visible}
+
+  .color-item {
+    width: 60px;
+  }
 }
 
 @media only screen and (max-width: 992px) and (min-width: 768px) {
   #wrapper {
-    width: 60%;
+    width: 50%;
   }
 
   #color-wheel-background {
-    --wheel-radius: 450px; /* it is variable! */
+    --wheel-radius: 300px; /* it is variable! */
   }
   :root {
-    --range-height: 60px;
+    --range-height: 40px;
   }
   select {
-    font-size: 30px;
+    font-size: 25px;
   }
 }
 
@@ -34,11 +37,11 @@
   }
 
   #color-wheel-background {
-    --wheel-radius: 350px; /* it is variable! */
+    --wheel-radius: 250px; /* it is variable! */
   }
 
   :root {
-    --range-height: 60px;
+    --range-height: 40px;
   }
 }
 @media only screen and (max-width: 480px) and (min-width: 320px) {

@@ -36,7 +36,7 @@ void rainbow_fade() {                         //-m2-FADE ALL LEDS THROUGH HSV RA
 void random_burst() {                         //-m4-RANDOM INDEX/COLOR
   idex = random(0, LED_COUNT);
   ihue = random(0, 255);
-  leds[idex] = CHSV(ihue, thissat, 255);
+  leds[idex] = CHSV(ihue, thissat, thisval);
   LEDS.show();
   delay(thisdelay);
 }
@@ -51,10 +51,10 @@ void ems_lightsONE() {                    //-m7-EMERGENCY LIGHTS (TWO COLOR SING
   int thathue = (thishue + 160) % 255;
   for (int i = 0; i < LED_COUNT; i++ ) {
     if (i == idexR) {
-      leds[i] = CHSV(thishue, thissat, 255);
+      leds[i] = CHSV(thishue, thissat, thisval);
     }
     else if (i == idexB) {
-      leds[i] = CHSV(thathue, thissat, 255);
+      leds[i] = CHSV(thathue, thissat, thisval);
     }
     else {
       leds[i] = CHSV(0, 0, 0);
@@ -115,18 +115,18 @@ void pacman() {                                  //-m24-REALLY TERRIBLE PACMAN C
   }
   if (lcount == 0) {
     for (int i = 0 ; i < LED_COUNT; i++ ) {
-      set_color_led(i, 255, 255, 0);
+      leds[i] = CHSV(thishue, thissat, thisval);
     }
   }
   if (lcount == 1 || lcount == 5) {
     for (int i = 0 ; i < LED_COUNT; i++ ) {
-      set_color_led(i, 255, 255, 0);
+      leds[i] = CHSV(thishue, thissat, thisval);
     }
     leds[s].r = 0; leds[s].g = 0; leds[s].b = 0;
   }
   if (lcount == 2 || lcount == 4) {
     for (int i = 0 ; i < LED_COUNT; i++ ) {
-      set_color_led(i, 255, 255, 0);
+      leds[i] = CHSV(thishue, thissat, thisval);
     }
     leds[s - 1].r = 0; leds[s - 1].g = 0; leds[s - 1].b = 0;
     leds[s].r = 0; leds[s].g = 0; leds[s].b = 0;
@@ -134,7 +134,7 @@ void pacman() {                                  //-m24-REALLY TERRIBLE PACMAN C
   }
   if (lcount == 3) {
     for (int i = 0 ; i < LED_COUNT; i++ ) {
-      set_color_led(i, 255, 255, 0);
+      leds[i] = CHSV(thishue, thissat, thisval);
     }
     leds[s - 2].r = 0; leds[s - 2].g = 0; leds[s - 2].b = 0;
     leds[s - 1].r = 0; leds[s - 1].g = 0; leds[s - 1].b = 0;
@@ -150,7 +150,7 @@ void random_color_pop() {                         //-m25-RANDOM COLOR POP
   idex = random(0, LED_COUNT);
   ihue = random(0, 255);
   one_color_all(0, 0, 0);
-  leds[idex] = CHSV(ihue, thissat, 255);
+  leds[idex] = CHSV(ihue, thissat, thisval);
   LEDS.show();
   delay(thisdelay);
 }
@@ -183,18 +183,21 @@ void TwinkleRandom(int Count, int SpeedDelay, boolean OnlyOne) {
   if (!effectFrameState) {
     if (effectJ < Count) {
       if (effectTimer <= millis()) {
-        setPixel(random(LED_COUNT), random(0, 255), random(0, 255), random(0, 255));
+        if (OnlyOne) {
+          setAll(0, 0, 0);
+        }
+        setPixel(random(LED_COUNT), random(0, thisval), random(0, thisval), random(0, thisval));
         FastLED.show();
         effectJ++;
         effectTimer = millis() + SpeedDelay;
       } else {
-        if (OnlyOne) {
-          setAll(0, 0, 0);
-        }
       }
     } else {
       effectFrameState = true;
       effectTimer = millis() + SpeedDelay;
+      if (OnlyOne) {
+        setAll(0, 0, 0);
+      }
     }
   } else {
     if (effectTimer <= millis()) {
@@ -207,7 +210,7 @@ void TwinkleRandom(int Count, int SpeedDelay, boolean OnlyOne) {
 
 void Sparkle(int SpeedDelay) {
   int Pixel = random(LED_COUNT);
-  leds[Pixel] = CHSV(thishue, thissat, ibright);
+  leds[Pixel] = CHSV(thishue, thissat, thisval);
   FastLED.show();
   delay(SpeedDelay);
   setPixel(Pixel, 0, 0, 0);
@@ -410,19 +413,19 @@ void rwb_march() {                    //-m15-R,W,B MARCH CCW
     }
     switch (idex) {
       case 0:
-        leds[0].r = 255;
+        leds[0].r = thisval;
         leds[0].g = 0;
         leds[0].b = 0;
         break;
       case 1:
-        leds[0].r = 255;
-        leds[0].g = 255;
-        leds[0].b = 255;
+        leds[0].r = thisval;
+        leds[0].g = thisval;
+        leds[0].b = thisval;
         break;
       case 2:
         leds[0].r = 0;
         leds[0].g = 0;
-        leds[0].b = 255;
+        leds[0].b = thisval;
         break;
     }
     for (int i = 1; i < LED_COUNT; i++ ) {
@@ -438,26 +441,49 @@ void rwb_march() {                    //-m15-R,W,B MARCH CCW
 }
 
 void ems_lightsSTROBE() {                  //-m26-EMERGENCY LIGHTS (STROBE LEFT/RIGHT)
-  idex++;
-  if (idex >= LED_COUNT) {
-    idex = 0;
-  }
-  int idexR = idex;
-  int idexB = antipodal_index(idexR);
+  int thishue = 0;
   int thathue = (thishue + 160) % 255;
-  for (int i = 0; i < LED_COUNT; i++ ) {
-    if (i == idexR) {
-      leds[i] = CHSV(thishue, thissat, 255);
+  if (!effectFrameState) {
+    if (effectJ < 5) {
+      if (effectTimer <= millis()) {
+        if (!effectState) {
+          for (int i = 0 ; i < TOP_INDEX; i++ ) {
+            leds[i] = CHSV(thishue, thissat, thisval);
+          }
+        } else {
+          setAll(0, 0, 0);
+          effectJ++;
+        }
+        FastLED.show();
+        effectState = !effectState;
+        effectTimer = millis() + thisdelay;
+      }
+    } else {
+      effectFrameState = true;
+      effectTimer = millis() + thisdelay;
+      effectJ = 0;
     }
-    else if (i == idexB) {
-      leds[i] = CHSV(thathue, thissat, 255);
-    }
-    else {
-      leds[i] = CHSV(0, 0, 0);
+  } else {
+    if (effectJ < 5) {
+      if (effectTimer <= millis()) {
+        if (!effectState) {
+          for (int i = TOP_INDEX ; i < LED_COUNT; i++ ) {
+            leds[i] = CHSV(thathue, thissat, thisval);
+          }
+        } else {
+          setAll(0, 0, 0);
+          effectJ++;
+        }
+        FastLED.show();
+        effectState = !effectState;
+        effectTimer = millis() + thisdelay;
+      }
+    } else {
+      effectFrameState = false;
+      effectTimer = millis() + thisdelay;
+      effectJ = 0;
     }
   }
-  LEDS.show();
-  delay(thisdelay);
 }
 
 
