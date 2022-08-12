@@ -113,8 +113,7 @@ void handlers() {
       Serial.printf("UploadStart: %s\n", filename.c_str());
       Serial.setDebugOutput(true);
       if (filename.indexOf("ino") != -1) {
-        Serial.print("CODE ");
-        Serial.println(len);
+        Serial.println("CODE ");
         Update.runAsync(true);
         if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000)) {
           Update.printError(Serial);

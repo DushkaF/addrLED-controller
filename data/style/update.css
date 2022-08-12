@@ -24,7 +24,7 @@ body {
 
 #wrapper {
   z-index: -1;
-  margin: 0px auto;
+  margin: 20px auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -43,6 +43,7 @@ body {
   border: #efeae1 2px solid;
   width: 100%;
   padding: 5%;
+  box-sizing: border-box;
 }
 
 .software-update {
@@ -138,4 +139,17 @@ body {
 
 input[type="file"] {
   display: none;
+}
+
+
+@media only screen and (max-width: 1500px) and (min-width: 768px){
+  #wrapper {
+    width: 40%;
+  }
+}
+
+@media only screen and (max-width: 768px){
+  #wrapper {
+    /* width: 75%; */
+  }
 }
