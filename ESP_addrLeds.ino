@@ -75,13 +75,15 @@ const char *server_name = "led.com";  // Can be "*" to all DNS requests
 
 void setup()
 {
-  Serial.begin(115200);              // открыть порт для связи
+  Serial.begin(115200);             
   LEDS.setBrightness(max_bright);  // ограничить максимальную яркость
-
   LEDS.addLeds<WS2811, LED_DT, GRB>(leds, LED_COUNT);  // настрйоки для нашей ленты (ленты на WS2811, WS2812, WS2812B)
-  one_color_all(0, 0, 0);          // погасить все светодиоды
+  FastLED.setMaxPowerInVoltsAndMilliamps(12, 2000);
+
+  
+  one_color_all(0, 0, 0);
   LEDS.show();
-  randomSeed(analogRead(0));              // отослать команду
+  randomSeed(analogRead(0));
 
   // Initialize SPIFFS
   if (!SPIFFS.begin()) {
@@ -91,7 +93,6 @@ void setup()
   uploadUserPresets();
 
   Serial.print("Configuring access point... ");
-  /* You can remove the password parameter if you want the AP to be open. */
   WiFi.mode(WIFI_AP);
   WiFi.softAP(APSSID);
   IPAddress myIP = WiFi.softAPIP();
@@ -116,7 +117,9 @@ void loop() {
   }
   ledEffect(ledMode);
 
-  if (restartRequired) { // check the flag here to determine if a restart is required
+  
+  // check the flag here to determine if a restart is required
+  if (restartRequired) { 
     Serial.printf("Rebooting... \n\r");
     restartRequired = false;
     ESP.restart();

@@ -11,7 +11,7 @@ window.onunload = function () {
   return "Are you shure?";
 };
 
-// let timerId = setInterval(function() { sendPresets(); }, 10000);
+let timerId = setInterval(function() { sendPresets(); }, 10000);
 
 document.getElementById("led-mode-select").onchange = function () {
   sendEffectsState(hueColor());
@@ -84,7 +84,7 @@ function decodePresetJSON(handler) {
   var speedSlider = document.getElementById("speed-range");
   var turnSw = document.getElementById("turn-switch");
 
-  selectList.selectedIndex = resp["effect"];
+  selectList.value = resp["effect"];
   speedSlider.value = resp["speed"];
   turnSw.checked = resp["turn"];
 
@@ -110,7 +110,7 @@ function sendPresets() {
     "preset 2": colorsPresets[1],
     "preset 3": colorsPresets[2],
     "now preset": nowPreset,
-    effect: parseInt(selectList.options[selectList.selectedIndex].value),
+    effect: parseInt(selectList.value),
     speed: speedSlider.value,
     turn: turnSw.checked,
   };
@@ -135,7 +135,7 @@ export default function sendEffectsState(hueColor) {
     var speedSlider = document.getElementById("speed-range");
     var turnSw = document.getElementById("turn-switch");
     var effectID = turnSw.checked
-      ? parseInt(selectList.options[selectList.selectedIndex].value)
+      ? parseInt(selectList.value)
       : 0;
     var sendJson = {
       effect: effectID,
