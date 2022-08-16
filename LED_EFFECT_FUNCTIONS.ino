@@ -86,24 +86,36 @@ void radiation() {                   //-m16-SORT OF RADIATION SYMBOLISH-
 }
 
 void flame() {                                    //-m22-FLAMEISH EFFECT
+  static int idelay;
+  static float hinc;
+  static int ihue;
   byte flame_sat = 255;
-  int idelay = random(0, 35);
   float hmin = 0.1;
   float hmax = 45.0;
   float hdif = hmax - hmin;
-  int randtemp = random(0, 3);
-  float hinc = (hdif / float(TOP_INDEX)) + randtemp;
-  int ihue = hmin;
-  for (int i = 0; i <= TOP_INDEX; i++ ) {
-    ihue = ihue + hinc;
-    leds[i] = CHSV(ihue, flame_sat, thisval);
-    int ih = horizontal_index(i);
-    leds[ih] = CHSV(ihue, flame_sat, thisval);
-    leds[TOP_INDEX].r = 255;
-    leds[TOP_INDEX].g = 255;
-    leds[TOP_INDEX].b = 255;
-    LEDS.show();
-    delay(idelay);
+  if (effectFrameState) {
+    if (effectJ <= TOP_INDEX) {
+      if (effectTimer <= millis()) {
+        ihue = ihue + hinc;
+        leds[effectJ] = CHSV(ihue, flame_sat, thisval);
+        int ih = horizontal_index(effectJ);
+        leds[ih] = CHSV(ihue, flame_sat, thisval);
+        leds[TOP_INDEX].r = 255;
+        leds[TOP_INDEX].g = 255;
+        leds[TOP_INDEX].b = 255;
+        LEDS.show();
+        effectJ++;
+        effectTimer = millis() + idelay;
+      }
+    } else {
+      effectFrameState = false;
+    }
+  } else {
+    hinc = (hdif / float(TOP_INDEX)) +  random(0, 3);
+    idelay = random(0, 35);
+    effectFrameState = true;
+    effectJ = 0;
+    ihue = hmin;
   }
 }
 

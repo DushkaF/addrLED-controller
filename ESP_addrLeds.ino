@@ -141,7 +141,7 @@ void ledEffect(int ledMode) {
 
   switch (ledMode) {
     case 999: break;                            // пазуа
-
+    case 0: one_color_all(0, 0, 0); LEDS.show(); break;
     case  2: rainbow_fade(); break;            // плавная смена цветов всей ленты
     case  4: random_burst(); break;            // случайная смена цветов
     case  7: ems_lightsONE(); break;           // вращаются красный и синий // Color can be changed
@@ -230,7 +230,7 @@ void uploadUserPresets() {
   StaticJsonDocument<384> doc;
   deserializeJson(doc, json);
   byte newLedMode = doc["turn"].as<boolean>() ? doc["effect"].as<int>() : 0;
-  byte nowColorPreset = doc["now preset"].as<int>();
+  byte nowColorPreset = doc["now preset"].as<int>() + 1;
   thishue = (int)(doc["preset " + String(nowColorPreset)][0].as<float>() / 360.0 * 255.0);   // Convert 0-360 to 0-255
   thissat = (int)(doc["preset " + String(nowColorPreset)][1].as<float>() * 255.0) ;          // Convert 0-1 to 0-255
   thisval = doc["preset " + String(nowColorPreset)][2].as<int>();

@@ -11,7 +11,7 @@ window.onunload = function () {
   return "Are you shure?";
 };
 
-let timerId = setInterval(function() { sendPresets(); }, 10000);
+let timerId = setInterval(function() { sendPresets(); }, 1000);
 
 document.getElementById("led-mode-select").onchange = function () {
   sendEffectsState(hueColor());
