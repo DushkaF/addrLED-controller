@@ -7,7 +7,7 @@ boolean effectState, effectFrameState;
 
 void one_color_all(int cred, int cgrn, int cblu) {       //-SET ALL LEDS TO ONE COLOR
   for (int i = 0 ; i < LED_COUNT; i++ ) {
-    leds[i].setRGB( cred, cgrn, cblu);
+    leds[i].setRGB(cred, cgrn, cblu);
   }
 }
 
@@ -541,7 +541,9 @@ byte * Wheel(byte WheelPos) {
     c[1] = WheelPos * 3;
     c[2] = 255 - WheelPos * 3;
   }
-
+  for(int i = 0; i < 3; i++){
+     c[i] = (byte)((float)c[i]*((float)thisval/255.0));
+  }
   return c;
 }
 

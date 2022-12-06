@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Upload Firmware</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="../style/settings.css"
+    />
+    <script src="../js/settings.js"></script>
+  </head>
+  <body>
+      <div class="header">
+        <h2>Settings</h2>
+      </div>
+    <div id="wrapper">
+      <div class="content-area">
+        <label for="led-count" class="menu-paragraph input-area">
+          <h3>LEDs count</h3>
+          <input type="number" class="setiings-box" id="led-count" param_name="led-count" />
+          <!-- <p class="upload-file-name color-change" id="code-filename" hidden>code.bin</p> -->
+        </label>
+      </div>
+      
+      <div class="content-area apply-area">
+        <div class="menu-paragraph menu-btn" id="apply-btn" path="/settings">
+          <h3 show>Apply changes</h3>
+          <h3 id="apply-btn-process" hidden>Apply...</h3>
+          <h3 id="apply-btn-success" class="success" hidden>Success!</h3>
+          <h3 id="apply-btn-fail" class="fail" hidden>Retry</h3>
+        </div>
+        </div>
+    </div>
+  </body>
+</html>

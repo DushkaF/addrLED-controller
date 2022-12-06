@@ -66,8 +66,12 @@ void setPixel(int Pixel, byte red, byte green, byte blue) {
   leds[Pixel].b = blue;
 }
 
-void setAll(byte red, byte green, byte blue) {
-  for (int i = 0; i < LED_COUNT; i++ ) {
+void setAll(byte red, byte green, byte blue){
+  setAll(red, green, blue, LED_COUNT);
+}
+
+void setAll(byte red, byte green, byte blue, int count){
+  for (int i = 0; i < count; i++ ) {
     setPixel(i, red, green, blue);
   }
   FastLED.show();

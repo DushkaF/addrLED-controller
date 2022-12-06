@@ -8,6 +8,10 @@ void handlers() {
     request->send(SPIFFS, "/html/update.html");
   });
 
+  server.on("/settings", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/html/settings.html");
+  });
+
   // Route to load styles file
   server.on("/style/style.css", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/style/style.css", "text/css");
@@ -21,6 +25,9 @@ void handlers() {
   server.on("/style/update.css", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/style/update.css", "text/css");
   });
+  server.on("/style/settings.css", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/style/settings.css", "text/css");
+  });
 
   // Route to load scripts
   server.on("/js/script.js", HTTP_GET, [](AsyncWebServerRequest * request) {
@@ -32,14 +39,19 @@ void handlers() {
   server.on("/js/update.js", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/js/update.js", "text/javascript");
   });
+  server.on("/js/settings.js", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/js/settings.js", "text/javascript");
+  });
 
   // Route to additional content
   server.on("/effects_set.json", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/effects_set.json", "application/json");
   });
-
   server.on("/user_set.json", HTTP_GET, [](AsyncWebServerRequest * request) {
     request->send(SPIFFS, "/user_set.json", "application/json");
+  });
+  server.on("/settings.json", HTTP_GET, [](AsyncWebServerRequest * request) {
+    request->send(SPIFFS, "/settings.json", "application/json");
   });
 
   // Route to functional content
@@ -83,6 +95,36 @@ void handlers() {
       }
     }
     request->send(200);
+  });
+  
+  server.on("/update_settings", HTTP_POST, [](AsyncWebServerRequest * request) {
+    int statusCode = 500;
+    if (request->params() > 0) {
+      AsyncWebParameter* p = request->getParam(0);
+      String json = p->value();
+      Serial.println(json);
+      StaticJsonDocument<384> doc;
+      deserializeJson(doc, json);
+      if(doc["led-count"].as<int>() < 0 || doc["led-count"].as<int>() > 255){
+        statusCode = 415;
+      } else {
+        File f = SPIFFS.open("/settings.json", "w");
+        if (!f) {
+          Serial.println("file open failed");
+        }
+        else
+        {
+          //Write data to file
+          Serial.println("Writing Data to File");
+          f.print(json);
+          f.close();  //Close file
+          statusCode = 200;
+          settingsChanged = true;
+        }
+      }
+    }
+    AsyncWebServerResponse *response = request->beginResponse(statusCode);
+    request->send(response);
   });
 
   server.on("/update", HTTP_POST, [](AsyncWebServerRequest * request) {

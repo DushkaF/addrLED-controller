@@ -158,23 +158,6 @@ export default function sendEffectsState(hueColor) {
   }
 }
 
-document.getElementById("LED-count").onchange = function () {
-  sendSettings();
-};
-
-function sendSettings() {
-  var countInput = document.getElementById("LED-count");
-  var sendJson = { "led-count": parseInt(countInput.value) };
-  console.log(sendJson);
-  makePOSTRequest(
-    "/settings",
-    sendJson,
-    function () {},
-    function () {
-      alert("Connection lost");
-    }
-  );
-}
 
 function makeGETRequest(
   path,

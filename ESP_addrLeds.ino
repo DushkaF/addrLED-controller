@@ -32,20 +32,22 @@
 //#define APPSK  "thereisnospoon"
 IPAddress apIP(192, 168, 4, 1);
 
-#define LED_COUNT 8          // число светодиодов в кольце/ленте
-#define LED_DT 4             // пин, куда подключен DIN ленты
+#define MAX_LED_COUNT 30          // число светодиодов в кольце/ленте
+#define LED_DT 13             // пин, куда подключен DIN ленты
 
 int max_bright = 50;          // максимальная яркость (0 - 255)
 
-volatile byte ledMode = 0;
+volatile byte ledMode = 9;
 
+
+byte LED_COUNT = 16;
 
 // ---------------СЛУЖЕБНЫЕ ПЕРЕМЕННЫЕ-----------------
 int BOTTOM_INDEX = 0;        // светодиод начала отсчёта
 int TOP_INDEX = int(LED_COUNT / 2);
 int EVENODD = LED_COUNT % 2;
-struct CRGB leds[LED_COUNT];
-int ledsX[LED_COUNT][3];     //-ARRAY FOR COPYING WHATS IN THE LED STRIP CURRENTLY (FOR CELL-AUTOMATA, MARCH, ETC)
+struct CRGB leds[MAX_LED_COUNT];
+int ledsX[MAX_LED_COUNT][3];     //-ARRAY FOR COPYING WHATS IN THE LED STRIP CURRENTLY (FOR CELL-AUTOMATA, MARCH, ETC)
 
 int thisdelay = 20;          //-FX LOOPS DELAY VAR
 int thisstep = 10;           //-FX LOOPS  VAR
@@ -63,6 +65,8 @@ float tcount = 0.0;          //-INC VAR FOR SIN LOOPS
 int lcount = 0;              //-ANOTHER COUNTING VAR
 
 bool restartRequired = false;  // Set this flag in the callbacks to restart ESP in the main loop
+boolean settingsChanged = false;
+
 
 uint32_t effectTimer;        // main loop timer variable
 // ---------------СЛУЖЕБНЫЕ ПЕРЕМЕННЫЕ-----------------
@@ -75,22 +79,24 @@ const char *server_name = "led.com";  // Can be "*" to all DNS requests
 
 void setup()
 {
-  Serial.begin(115200);             
-  LEDS.setBrightness(max_bright);  // ограничить максимальную яркость
-  LEDS.addLeds<WS2811, LED_DT, GRB>(leds, LED_COUNT);  // настрйоки для нашей ленты (ленты на WS2811, WS2812, WS2812B)
-  FastLED.setMaxPowerInVoltsAndMilliamps(12, 2000);
-
-  
-  one_color_all(0, 0, 0);
-  LEDS.show();
-  randomSeed(analogRead(0));
+  Serial.begin(115200);   
 
   // Initialize SPIFFS
   if (!SPIFFS.begin()) {
     Serial.println("An Error has occurred while mounting SPIFFS");
     return;
   }
+
+  LEDS.addLeds<WS2811, LED_DT, GRB>(leds, MAX_LED_COUNT);  // set all line 
+  
   uploadUserPresets();
+  uploadSettings();
+  setLedsSettings();
+  
+  one_color_all(0, 0, 0);
+  LEDS.show();
+  randomSeed(analogRead(0));
+
 
   Serial.print("Configuring access point... ");
   WiFi.mode(WIFI_AP);
@@ -116,6 +122,11 @@ void loop() {
     Serial.flush();
   }
   ledEffect(ledMode);
+
+  if(settingsChanged){
+    uploadSettings();
+    settingsChanged = false;
+  }
 
   
   // check the flag here to determine if a restart is required
@@ -236,4 +247,40 @@ void uploadUserPresets() {
   thisval = doc["preset " + String(nowColorPreset)][2].as<int>();
   effectSpeed = (float)(doc["speed"].as<float>() / 100.0);
   change_mode(newLedMode);                                         // меняем режим через change_mode (там для каждого режима стоят цвета и задержки)
+}
+
+void uploadSettings(){
+  String json;
+  File file = SPIFFS.open("/settings.json", "r");
+  if (!file) {
+    Serial.println("Failed to open file for reading");
+    return;
+  }
+  while (file.available()) {
+    //Lets read line by line from the file
+    json += file.readStringUntil('\n');
+  }
+  file.close();
+
+  Serial.println(json);
+  StaticJsonDocument<384> doc;
+  deserializeJson(doc, json);
+  LED_COUNT = doc["led-count"].as<byte>();
+
+  setLedsSettings();
+  
+  // update visualise functions variables
+  TOP_INDEX = int(LED_COUNT / 2);
+  EVENODD = LED_COUNT % 2;
+}
+
+void setLedsSettings(){
+  Serial.print("change LEDs ");
+  Serial.println(LED_COUNT);
+//  leds.clearLedData();
+  LEDS.clear();
+  setAll(0,0,0,MAX_LED_COUNT);
+  LEDS.setBrightness(max_bright);  // ограничить максимальную яркость
+  LEDS.addLeds<WS2811, LED_DT, GRB>(leds, LED_COUNT);  // настрйоки для нашей ленты (ленты на WS2811, WS2812, WS2812B)
+  FastLED.setMaxPowerInVoltsAndMilliamps(12, 1800);
 }

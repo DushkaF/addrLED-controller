@@ -1,0 +1,170 @@
+html,
+body {
+  margin: 0;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+  -webkit-appearance: none;
+}
+
+body {
+  font-family: monospace, monospace;
+  -webkit-appearance: none;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  min-height: 100%;
+  background: #363538;
+  color: #efeae1;
+}
+
+#wrapper {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  z-index: -1;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  top: 10%;
+  height: 100%;
+  width: 80%;
+  padding-top: 50px;
+}
+
+.header{
+  width: 100%;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  z-index: 999;
+  background-color: #181124b2;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 1px 0 #efeae1;
+}
+
+.content-area {
+  margin: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border: #efeae1 2px solid;
+  width: 100%;
+  padding: 5%;
+  box-sizing: border-box;
+}
+
+.input-area {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 95%;
+  padding: 2%;
+  margin: 2%;
+  border: #efeae1 1px solid;
+}
+
+.input-area h3 {
+  margin-right: 2%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#led-count{
+  width: 20%;
+}
+
+input[type="number"] {
+  padding: 1px 2px;
+  background: #363538;
+  border: none;
+  border-bottom: 2px solid #efeae1;
+  border-radius: 0;
+  color: #efeae1;
+  font-weight: bold;
+  font-size: medium;
+  text-align: center;
+}
+
+.apply-area{
+  /* width: 60%; */
+  height: 8%;
+}
+
+.success {
+  color: rgb(48, 209, 88) !important;
+}
+
+.fail {
+  color: rgb(255, 69, 58) !important;
+}
+
+.color-change {
+  transition-property: color;
+  transition-duration: 0.5s;
+}
+
+@keyframes fadeInFromNone {
+  0% {
+    display: none;
+    opacity: 0;
+  }
+
+  1% {
+    display: block;
+    opacity: 0;
+  }
+
+  100% {
+    display: block;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.fade-out {
+  animation: fadeOut 1s ease forwards;
+}
+
+.fade {
+  opacity: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+@media only screen and (max-width: 1500px) and (min-width: 768px){
+  #wrapper {
+    width: 40%;
+  }
+}
+
+@media only screen and (max-width: 768px){
+  #wrapper {
+    /* width: 75%; */
+  }
+}
