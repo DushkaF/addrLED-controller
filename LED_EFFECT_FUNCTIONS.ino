@@ -500,7 +500,7 @@ void ems_lightsSTROBE() {                  //-m26-EMERGENCY LIGHTS (STROBE LEFT/
 
 
 //-------------------------------newKITT---------------------------------------
-void rainbowCycle(int SpeedDelay) { //todo beauty code style
+void rainbowCycle(int SpeedDelay, boolean inverse) { //todo beauty code style
   static uint16_t rCycleJ;
 
   byte *c;
@@ -508,9 +508,16 @@ void rainbowCycle(int SpeedDelay) { //todo beauty code style
 
   if (rCycleJ < 256 * 5) { // 5 cycles of all colors on wheel
     if (effectTimer <= millis()) {
-      for (i = 0; i < LED_COUNT; i++) {
-        c = Wheel(((i * 256 / LED_COUNT) + rCycleJ) & 255);
-        setPixel(i, *c, *(c + 1), *(c + 2));
+      if (!inverse) {
+        for (i = 0; i < LED_COUNT; i++) {
+          c = Wheel(((i * 256 / LED_COUNT) + rCycleJ) & 255);
+          setPixel(i, *c, *(c + 1), *(c + 2));
+        }
+      } else {
+        for (i = 0; i < LED_COUNT; i++) {
+          c = Wheel(((i * 256 / LED_COUNT) - rCycleJ) & 255);
+          setPixel(i, *c, *(c + 1), *(c + 2));
+        }
       }
       FastLED.show();
       rCycleJ++;
@@ -541,8 +548,8 @@ byte * Wheel(byte WheelPos) {
     c[1] = WheelPos * 3;
     c[2] = 255 - WheelPos * 3;
   }
-  for(int i = 0; i < 3; i++){
-     c[i] = (byte)((float)c[i]*((float)thisval/255.0));
+  for (int i = 0; i < 3; i++) {
+    c[i] = (byte)((float)c[i] * ((float)thisval / 255.0));
   }
   return c;
 }

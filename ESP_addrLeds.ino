@@ -18,8 +18,6 @@
 #include <SPIFFS.h>
 #elif defined(ESP8266)
 //For ESP8266
-#include <FS.h>
-#include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
 #else
 #error "Board not supported"
@@ -79,7 +77,7 @@ const char *server_name = "led.com";  // Can be "*" to all DNS requests
 
 void setup()
 {
-  Serial.begin(115200);   
+  Serial.begin(115200);
 
   // Initialize SPIFFS
   if (!SPIFFS.begin()) {
@@ -87,16 +85,17 @@ void setup()
     return;
   }
 
-  LEDS.addLeds<WS2811, LED_DT, GRB>(leds, MAX_LED_COUNT);  // set all line 
-  
-  uploadUserPresets();
-  uploadSettings();
-  setLedsSettings();
-  
+  LEDS.addLeds<WS2811, LED_DT, GRB>(leds, MAX_LED_COUNT);  // set all line
+
+
   one_color_all(0, 0, 0);
   LEDS.show();
   randomSeed(analogRead(0));
 
+  
+  setLedsSettings();
+  uploadSettings();
+  uploadUserPresets();
 
   Serial.print("Configuring access point... ");
   WiFi.mode(WIFI_AP);
@@ -123,14 +122,14 @@ void loop() {
   }
   ledEffect(ledMode);
 
-  if(settingsChanged){
+  if (settingsChanged) {
     uploadSettings();
     settingsChanged = false;
   }
 
-  
+
   // check the flag here to determine if a restart is required
-  if (restartRequired) { 
+  if (restartRequired) {
     Serial.printf("Rebooting... \n\r");
     restartRequired = false;
     ESP.restart();
@@ -160,8 +159,8 @@ void ledEffect(int ledMode) {
     case 22: flame(); break;                   // эффект пламени
     case 25: random_color_pop(); break;        // безумие случайных вспышек
     case 26: ems_lightsSTROBE(); break;        // полицейская мигалка
-    case 30: new_rainbow_loop(); break;        // крутая плавная вращающаяся радуга
-    case 37: rainbowCycle(thisdelay); break;                                        // очень плавная вращающаяся радуга
+    case 30: rainbowCycle(thisdelay, true); break;        // крутая плавная вращающаяся радуга
+    case 37: rainbowCycle(thisdelay, false); break;                                        // очень плавная вращающаяся радуга
     case 38: TwinkleRandom(20, thisdelay, 1); break;                                // случайные разноцветные включения (1 - танцуют все, 0 - случайный 1 диод)
 
     // with color choising
@@ -187,7 +186,7 @@ void ledEffect(int ledMode) {
 
 void change_mode(int newmode) {
   switch (newmode) {
-    case 0: one_color_all(0, 0, 0); LEDS.show(); break; //---ALL OFF
+    case 0: one_color_all(0, 0, 0);  LEDS.show(); break; //---ALL OFF
     case 1: one_color_all_HSV(thishue, thissat, thisval); LEDS.show(); break; //---ALL ON
     case 2: thisdelay = 60; break;                      //---STRIP RAINBOW FADE
     case 4: thisdelay = 20; thissat = 255; break;                      //---RANDOM BURST
@@ -249,7 +248,7 @@ void uploadUserPresets() {
   change_mode(newLedMode);                                         // меняем режим через change_mode (там для каждого режима стоят цвета и задержки)
 }
 
-void uploadSettings(){
+void uploadSettings() {
   String json;
   File file = SPIFFS.open("/settings.json", "r");
   if (!file) {
@@ -268,18 +267,18 @@ void uploadSettings(){
   LED_COUNT = doc["led-count"].as<byte>();
 
   setLedsSettings();
-  
+
   // update visualise functions variables
   TOP_INDEX = int(LED_COUNT / 2);
   EVENODD = LED_COUNT % 2;
 }
 
-void setLedsSettings(){
+void setLedsSettings() {
   Serial.print("change LEDs ");
   Serial.println(LED_COUNT);
-//  leds.clearLedData();
+  //  leds.clearLedData();
   LEDS.clear();
-  setAll(0,0,0,MAX_LED_COUNT);
+  setAll(0, 0, 0, MAX_LED_COUNT);
   LEDS.setBrightness(max_bright);  // ограничить максимальную яркость
   LEDS.addLeds<WS2811, LED_DT, GRB>(leds, LED_COUNT);  // настрйоки для нашей ленты (ленты на WS2811, WS2812, WS2812B)
   FastLED.setMaxPowerInVoltsAndMilliamps(12, 1800);
