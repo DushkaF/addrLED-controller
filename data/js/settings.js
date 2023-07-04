@@ -4,40 +4,46 @@ window.onload = function () {
 };
 
 
-function getSettings(){
-    makeGETRequest(
-        "/settings.json",
-        decodePresetJSON,
-        function (request, path, func) {
-          waitGET(request, path, func);
-        }
-      );
+function getSettings() {
+  makeGETRequest(
+    "/settings.json", // for debug use "../settings.json"
+    decodePresetJSON,
+    function (request, path, func) {
+      waitGET(request, path, func);
+    }
+  );
 }
 
 function decodePresetJSON(handler) {
-    console.log("content-type: ", handler.getResponseHeader("Content-Type"));
-    var resp = JSON.parse(handler.responseText);
-    console.log(resp);
-    var ledСount = document.getElementById("led-count");
+  console.log("content-type: ", handler.getResponseHeader("Content-Type"));
+  var resp = JSON.parse(handler.responseText);
+  console.log(resp);
+  var ssidName = document.getElementById("ssid-name");
+  var ledСount = document.getElementById("led-count");
 
-    ledСount.value = resp["led-count"];
-  }
+  ssidName.value = resp["ssid-name"];
+  ledСount.value = resp["led-count"];
+}
 
 
 function sendSettings() {
   var settingsBox = document.getElementsByClassName("setiings-box");
   var sendJson = {};
   for (var i = 0; i < settingsBox.length; i++) {
-    sendJson[settingsBox[i].getAttribute("param_name")] =  parseInt(settingsBox[i].value);
+    if (settingsBox[i].getAttribute("param_type") == "int") {
+      sendJson[settingsBox[i].getAttribute("param_name")] = parseInt(settingsBox[i].value);
+    } else {
+      sendJson[settingsBox[i].getAttribute("param_name")] = settingsBox[i].value;
+    }
   }
   console.log(JSON.stringify(sendJson));
   makePOSTRequest(
     "/update_settings",
     sendJson,
-    function () {showUploadState(true);},
-    function () {showUploadState(false);},
+    function () { showUploadState(true); },
+    function () { showUploadState(false); },
     function () {
-        changeTextBox(
+      changeTextBox(
         document.querySelector("#apply-btn [show]"),
         document.getElementById("apply-btn-process")
       );
@@ -61,34 +67,34 @@ function showUploadState(success) {
   if (success) {    //TODO make active if change params after sending
     document
       .getElementById("apply-btn")
-      // .removeEventListener("click", sendUpdateFiles);
+    // .removeEventListener("click", sendUpdateFiles);
   }
 }
 
 var changingText;
 function changeTextBox(from, to) {
-    from.removeAttribute("show");
-    to.setAttribute("show", "");
-    from.classList.add("fade-out-text");
-    from.classList.add("fade");
-    clearTimeout(changingText);
+  from.removeAttribute("show");
+  to.setAttribute("show", "");
+  from.classList.add("fade-out-text");
+  from.classList.add("fade");
+  clearTimeout(changingText);
+  setTimeout(function () {
+    from.hidden = true;
+    from.classList.remove("fade-out-text");
+    from.classList.remove("fade");
+    to.hidden = false;
+    to.classList.add("fade-in-text");
     setTimeout(function () {
-        from.hidden = true;
-        from.classList.remove("fade-out-text");
-        from.classList.remove("fade");
-        to.hidden = false;
-        to.classList.add("fade-in-text");
-        setTimeout(function () {
-            from.classList.remove("fade-in-text");
-        }, 200);
+      from.classList.remove("fade-in-text");
     }, 200);
+  }, 200);
 }
 
 function makeGETRequest(
   path,
   func,
-  badFunc = function () {},
-  loadFunc = function () {}
+  badFunc = function () { },
+  loadFunc = function () { }
 ) {
   var xmlHttp = CreateRequest();
   xmlHttp.open("GET", path, true);
@@ -109,33 +115,33 @@ function makeGETRequest(
 }
 
 function waitGET(request, path, func) {
-    if (request.status == 202 && request.readyState == 4) {
-      repeatRequest = setInterval(function () {
-        if (!existRequest) {
-          existRequest = true;
-          console.log("try to get");
-          makeGETRequest(
-            path,
-            function (secondary_request) {
-              repeatRequest = clearInterval(repeatRequest);
-              func(secondary_request);
-            },
-            function () {
-              existRequest = false;
-            }
-          );
-        }
-      }, 1500);
-    }
+  if (request.status == 202 && request.readyState == 4) {
+    repeatRequest = setInterval(function () {
+      if (!existRequest) {
+        existRequest = true;
+        console.log("try to get");
+        makeGETRequest(
+          path,
+          function (secondary_request) {
+            repeatRequest = clearInterval(repeatRequest);
+            func(secondary_request);
+          },
+          function () {
+            existRequest = false;
+          }
+        );
+      }
+    }, 1500);
   }
+}
 
 
 function makePOSTRequest(
   path,
   json,
-  func = function () {},
-  badFunc = function () {},
-  loadFunc = function () {}
+  func = function () { },
+  badFunc = function () { },
+  loadFunc = function () { }
 ) {
   var xmlHttp = CreateRequest();
   xmlHttp.open("POST", path, true); // Открываем асинхронное соединение

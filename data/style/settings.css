@@ -78,8 +78,24 @@ body {
   white-space: nowrap;
 }
 
+#ssid-name{
+  width: 20%;
+}
+
 #led-count{
   width: 20%;
+}
+
+input[type="text"] {
+  padding: 1px 2px;
+  background: #363538;
+  border: none;
+  border-bottom: 2px solid #efeae1;
+  border-radius: 0;
+  color: #efeae1;
+  font-weight: bold;
+  font-size: medium;
+  text-align: center;
 }
 
 input[type="number"] {
@@ -92,6 +108,14 @@ input[type="number"] {
   font-weight: bold;
   font-size: medium;
   text-align: center;
+}
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
 }
 
 .apply-area{

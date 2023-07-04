@@ -26,7 +26,7 @@
 
 
 
-#define APSSID "LedControl"
+String APSSID = "LedControl";
 //#define APPSK  "thereisnospoon"
 IPAddress apIP(192, 168, 4, 1);
 
@@ -78,7 +78,7 @@ const char *server_name = "led.com";  // Can be "*" to all DNS requests
 void setup()
 {
   Serial.begin(115200);
-
+  Serial.println();
   // Initialize SPIFFS
   if (!SPIFFS.begin()) {
     Serial.println("An Error has occurred while mounting SPIFFS");
@@ -93,7 +93,7 @@ void setup()
   randomSeed(analogRead(0));
 
   
-  setLedsSettings();
+//  setLedsSettings();
   uploadSettings();
   uploadUserPresets();
 
@@ -262,9 +262,10 @@ void uploadSettings() {
   file.close();
 
   Serial.println(json);
-  StaticJsonDocument<384> doc;
+  StaticJsonDocument<1024> doc;
   deserializeJson(doc, json);
   LED_COUNT = doc["led-count"].as<byte>();
+  APSSID = doc["ssid-name"].as<String>();
 
   setLedsSettings();
 

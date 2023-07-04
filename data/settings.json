@@ -1,3 +1,4 @@
 {
-    "led-count" : 16
+    "led-count" : 16,
+    "ssid-name":"LedControl"
 }
